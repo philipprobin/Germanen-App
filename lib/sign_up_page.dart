@@ -1,5 +1,7 @@
 
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:germanenapp/widgets/submit_button.dart';
 
@@ -19,7 +21,7 @@ class _SignUpState extends State<SignUpPage> {
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
 
-
+  var loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +42,11 @@ class _SignUpState extends State<SignUpPage> {
 
                     _TextField(label: 'Name', controller: _nameController,
                         validator: _requiredValidator),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 10),
 
                     _TextField(label: 'Email', controller: _emailController,
                         validator: _requiredValidator),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 10),
 
                     _TextField(label: 'Passwort', controller: _passwordController,
                         validator: _requiredValidator,
@@ -56,15 +58,20 @@ class _SignUpState extends State<SignUpPage> {
                         password:true),
                     const SizedBox(height: 10),
 
-                    SubmitButton(
-                      onPressed: (){
-                        if(_formKey.currentState!= null && _formKey.currentState!.validate()){
-
-                        }
-                      },
-                      text: 'registrieren',
-                      padding: 16,
-                    ),
+                    if(loading)...[
+                      const Center(child: CircularProgressIndicator()),
+                    ],
+                    if(!loading)...[
+                      SubmitButton(
+                        onPressed: (){
+                          if(_formKey.currentState!= null && _formKey.currentState!.validate()){
+                            _signUp();
+                          }
+                        },
+                        text: 'Registrieren',
+                        padding: 16,
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -89,7 +96,70 @@ class _SignUpState extends State<SignUpPage> {
     }
     return null;
   }
+
+  Future _signUp() async {
+    setState(() { loading = true; });
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      await FirebaseFirestore.instance.collection('users').add({
+        'email': _emailController.text,
+        'name': _nameController.text,
+      });
+
+      await showDialog(context: context, builder: (context) => AlertDialog(
+        title: Text('Registrierung erfolgreich'),
+        content: Text('Dein Konto wurde erstellt, du kannst dich jetzt anmelden.'),
+        actions: [TextButton(onPressed: () {
+          Navigator.of(context).pop();
+
+        }, child: Text('Ok'))],
+      ));
+      Navigator.of(context).pop();
+
+    } on FirebaseAuthException catch (e) {
+      _handleSignUpError(e);
+      setState(() { loading = false; });
+    }
+  }
+
+  void _handleSignUpError(FirebaseAuthException e) {
+    String messageToDisplay;
+    switch (e.code) {
+      case 'email-already-in-use':
+        messageToDisplay = 'Diese E-Mail wird schon verwendet';
+        break;
+      case 'invalid-email':
+        messageToDisplay = 'Die E-Mail ist ungültig';
+        break;
+      case 'operation-not-allowed':
+        messageToDisplay = 'Diese Operation ist nicht erlaubt';
+        break;
+      case 'weak-password':
+        messageToDisplay = 'Das Passwort ist zu schwach';
+        break;
+      default:
+        messageToDisplay = 'Unbekannter Fehler';
+        break;
+    }
+    showDialog(context: context, builder: (BuildContext context) => AlertDialog(
+      title: Text('Anmelden fehlgeschlagen'),
+      content: Text(messageToDisplay),
+      actions: [TextButton(onPressed: () {
+        Navigator.of(context).pop();
+
+      }, child: Text('Ok'))],
+    ));
+  }
+
+
+
+
 }
+
 class _TextField extends StatelessWidget {
 
   final TextEditingController controller;
