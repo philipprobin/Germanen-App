@@ -29,27 +29,24 @@ class _SignUpState extends State<SignUpPage> {
       appBar: AppBar(
         title: const Text('Registrieren'),
       ),
-      body: SafeArea(
+      body: Form(
         key: _formKey,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              Flexible(
-                child: Column(
+          child: ListView(
                   children: [
                     const SizedBox(height: 10),
 
                     _TextField(label: 'Name', controller: _nameController,
-                        validator: _requiredValidator),
+                        validator: _requiredNameValidator),
                     const SizedBox(height: 10),
 
                     _TextField(label: 'Email', controller: _emailController,
-                        validator: _requiredValidator),
+                        validator: _requiredEmailValidator),
                     const SizedBox(height: 10),
 
                     _TextField(label: 'Passwort', controller: _passwordController,
-                        validator: _requiredValidator,
+                        validator: _requiredPasswordValidator,
                         password:true),
                     const SizedBox(height: 10),
 
@@ -75,21 +72,41 @@ class _SignUpState extends State<SignUpPage> {
                   ],
                 ),
               ),
-            ],
           ),
-        ),
+    );
+  }
+  void _showToast(BuildContext context, String? message) {
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        content: Text(message!),
       ),
     );
   }
-  String? _requiredValidator(String? text){
+
+  String? _requiredNameValidator(String? text){
     if(text==null|| text.trim().isEmpty){
       return 'Bitte gib einen Benutzernamen ein.';
     }
     return null;
   }
+  String? _requiredEmailValidator(String? text){
+    if(text==null|| text.trim().isEmpty){
+      return 'Bitte gib eine Email ein.';
+    }
+    return null;
+  }
+
+  String? _requiredPasswordValidator(String? text){
+    if(text==null|| text.trim().isEmpty){
+      return 'Bitte gib ein Passwort ein.';
+    }
+    return null;
+  }
+
   String? _confirmPasswordValidator(String? confirmPasswordText){
     if(confirmPasswordText==null|| confirmPasswordText.trim().isEmpty){
-      return 'Bitte gib einen Benutzernamen ein.';
+      return 'Bitte bestätige dein Passwort.';
     }
     if(_passwordController.text != confirmPasswordText) {
       return 'Passwörter stimmen nicht überein';
@@ -98,6 +115,7 @@ class _SignUpState extends State<SignUpPage> {
   }
 
   Future _signUp() async {
+    debugPrint('signUp print');
     setState(() { loading = true; });
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -110,14 +128,7 @@ class _SignUpState extends State<SignUpPage> {
         'name': _nameController.text,
       });
 
-      await showDialog(context: context, builder: (context) => AlertDialog(
-        title: Text('Registrierung erfolgreich'),
-        content: Text('Dein Konto wurde erstellt, du kannst dich jetzt anmelden.'),
-        actions: [TextButton(onPressed: () {
-          Navigator.of(context).pop();
-
-        }, child: Text('Ok'))],
-      ));
+      _showToast(context, 'Registrierung erfolgreich!');
       Navigator.of(context).pop();
 
     } on FirebaseAuthException catch (e) {
@@ -127,10 +138,10 @@ class _SignUpState extends State<SignUpPage> {
   }
 
   void _handleSignUpError(FirebaseAuthException e) {
-    String messageToDisplay;
+    String messageToDisplay ="";
     switch (e.code) {
       case 'email-already-in-use':
-        messageToDisplay = 'Diese E-Mail wird schon verwendet';
+        messageToDisplay = 'Die E-Mail wird schon verwendet';
         break;
       case 'invalid-email':
         messageToDisplay = 'Die E-Mail ist ungültig';
@@ -145,14 +156,7 @@ class _SignUpState extends State<SignUpPage> {
         messageToDisplay = 'Unbekannter Fehler';
         break;
     }
-    showDialog(context: context, builder: (BuildContext context) => AlertDialog(
-      title: Text('Anmelden fehlgeschlagen'),
-      content: Text(messageToDisplay),
-      actions: [TextButton(onPressed: () {
-        Navigator.of(context).pop();
-
-      }, child: Text('Ok'))],
-    ));
+    _showToast(context, messageToDisplay);
   }
 
 
