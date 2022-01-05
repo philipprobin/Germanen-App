@@ -1,8 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:germanenapp/validators/Database.dart';
 // @dart=2.9
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth;
+  //final Database _database;
 
+  //Database(this._database)
   AuthenticationService(this._firebaseAuth);
 
   /// Changed to idTokenChanges as it updates depending on more cases.
@@ -22,6 +26,9 @@ class AuthenticationService {
   Future<String> signIn({required String email, required String password}) async {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+
+      //_database.setUsernameFromDisplayname(_firebaseAuth.currentUser.displayName);
+      debugPrint('auth debug: ${_firebaseAuth.currentUser.displayName}');
       return "Signed in";
     } on FirebaseAuthException catch (e) {
       return e.message;

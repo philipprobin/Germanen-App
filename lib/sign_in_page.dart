@@ -16,32 +16,38 @@ class SignInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text('Anmelden'),
-      ),
-      body: SafeArea(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-
-
-            children: [
-              Flexible(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: SingleChildScrollView(
+          child: Container(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: Form(
+                key: _formKey,
                 child: Column(
-                  children: [
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(
+                        height: 300,
+                        child: Image.asset(
+                          "assets/Germanen-Wappen.jpg",
+                          fit: BoxFit.contain,
+                        )),
                     const SizedBox(height: 15),
 
                     _TextField(
                       label: 'Email',
                       controller: emailController,
+                      icon: Icon(Icons.mail),
                     ),
 
                     const SizedBox(height: 15),
                     _TextField(
                       controller: passwordController,
                       label: "Passwort",
+                      icon: Icon(Icons.vpn_key),
                     ),
                     SubmitButton(
                       onPressed: () {
@@ -53,15 +59,31 @@ class SignInPage extends StatelessWidget {
                       text: 'Anmelden',
                       padding: 16,
                     ),
-
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text("Du hast noch keinen Account? "),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          SignUpPage()));
+                            },
+                            child: Text(
+                              "Registrieren",
+                              style: TextStyle(
+                                  color: Colors.redAccent,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15),
+                            ),
+                          )
+                        ])
                   ],
                 ),
               ),
-              Container(
-                height: 60,
-                child: widgets.buildSignUn(context),
-              )
-            ],
+            ),
           ),
         ),
       ),
@@ -73,12 +95,14 @@ class _TextField extends StatelessWidget {
   final TextEditingController controller;
   final String label;
   final bool password;
+  final Icon icon;
   final TextInputType? keyboardType;
   final FormFieldValidator<String>? validator;
 
   const _TextField({
     required this.label,
     required this.controller,
+    required this.icon,
     this.validator,
     this.password = false,
     this.keyboardType,
@@ -90,9 +114,11 @@ class _TextField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, right: 16.0),
       child: TextFormField(
+        autofocus: false,
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
+          prefixIcon: icon,
           border: const OutlineInputBorder(),
         ),
         keyboardType: keyboardType,
