@@ -13,40 +13,9 @@ class Database{
   static bool exist = false;
 
 
-  /// Check If Document Exists
-  Future<bool> checkIfDocExists(String docId) async {
-    try {
-      var doc = await _mainCollection.doc(docId).get();
-      return doc.exists;
-    } catch (e) {
-      throw e
-      ;
-    }
-  }
 
   String? setUsernameFromDisplayname(String? displayname){
       userId= displayname;
-  }
-
-
-  Future<String> setDocId(String title) async {
-     var list = title.split(" ");
-     var newDocId = "";
-
-     //write max two words of title
-     for(var i = 0; i< list.length; i++) {
-       newDocId = newDocId+list[i];
-       if(i==2){
-         break;
-       }
-     }
-     //append Number if docId exists
-     exist = await checkIfDocExists(newDocId);
-     for(var i = 0; exist; i++){
-       newDocId=newDocId+"("+i.toString()+")";
-       exist = await checkIfDocExists(newDocId);
-     }
-      return newDocId;
   }
 
 
@@ -88,22 +57,21 @@ class Database{
     return _mainCollection.snapshots();
   }
 
-  static Future<bool>  checkUserIdExists({
+  static bool  checkUserIdExists({
     required String userId,
-  })async {
-    bool result = false;
-    _usersCollection
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) {
-        debugPrint("userId:: ${doc
-        ['userId']}");
-        if(doc['userId'] == userId){
-          result = true;
-        }
+  }){
+    try {
+
+       _usersCollection.doc(userId).get().then((doc) {
+
+        exist = doc.exists;
+        debugPrint('docname ${doc.data().length} and $userId exist? $exist');
       });
-    });
-    return result;
+      return exist;
+    } catch (e) {
+      // If any error
+      return false;
+    }
 
   }
 

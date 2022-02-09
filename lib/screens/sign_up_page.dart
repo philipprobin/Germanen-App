@@ -124,7 +124,9 @@ class _SignUpState extends State<SignUpPage> {
     if(text==null|| text.trim().isEmpty){
       return 'Bitte gib einen Benutzernamen ein.';
     }
-    if(Database.checkUserIdExists(userId: '${text.trim()}') == true){
+    bool checkDb = Database.checkUserIdExists(userId: '${text.trim()}');
+    if(checkDb){
+      debugPrint('docname if true');
       return 'Dieser Nutzername ist schon vergeben.';
     }
     return null;
@@ -156,10 +158,7 @@ class _SignUpState extends State<SignUpPage> {
       await FirebaseAuth.instance.currentUser.updateProfile(
           displayName: _nameController.text
       );
-      await FirebaseFirestore.instance.collection('users').add({
-        'email': _emailController.text,
-        'name': _nameController.text,
-      });
+      await FirebaseFirestore.instance.collection('users').doc(_nameController.text).set({  'email': _emailController.text,});
       //sign in
       context.read<AuthenticationService>().signIn(
         email: _emailController.text.trim(),
