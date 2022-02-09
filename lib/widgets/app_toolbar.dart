@@ -1,26 +1,38 @@
 import 'package:flutter/material.dart';
 
-class AppToolbar extends StatelessWidget implements PreferredSizeWidget {
+class AppToolbar extends StatelessWidget {
 
-  final String title;
-  final List<Widget> actions;
+  final String sectionName;
 
-  AppToolbar({
-    required this.title,
-    this.actions = const [],
-  });
+  const AppToolbar({
+    Key? key,
+    required this.sectionName,
+  }): super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: Colors.white,
-      title: Text(title, style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.w700)),
-      actions: actions,
-      iconTheme: IconThemeData(
-          color: Theme.of(context).primaryColor
-      ),
+
+    return Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 15
+        ),
+        alignment: FractionalOffset.center,
+        child: new Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+          children: [
+            Image.asset('assets/zirkel.png', height: 50,),
+            Image.asset('assets/gefaltete_broschüre_50.png', height: 50,),
+        ],
+      )
     );
+
+
   }
+
+
 
   @override
   Size get preferredSize => Size.fromHeight(56.0);

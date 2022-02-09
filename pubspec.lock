@@ -205,6 +205,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.0.1"
+  pull_to_refresh:
+    dependency: "direct main"
+    description:
+      name: pull_to_refresh
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   quiver:
     dependency: transitive
     description:
@@ -282,4 +289,4 @@ packages:
     version: "2.2.1"
 sdks:
   dart: ">=2.14.0 <3.0.0"
-  flutter: ">=1.16.0"
+  flutter: ">=2.0.0"

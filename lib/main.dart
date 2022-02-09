@@ -5,11 +5,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:germanenapp/sign_in_page.dart';
+import 'package:germanenapp/screens/login_page.dart';
 import 'package:provider/provider.dart';
 
 import 'authentication_service.dart';
-import 'home_page.dart';
+import 'screens/home_page.dart';
 // @dart=2.9
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.red,
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.white,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         home: AuthenticationWrapper(),
@@ -49,6 +49,7 @@ class AuthenticationWrapper extends StatelessWidget {
     final firebaseUser = context.watch<User>();
 
     if (firebaseUser != null) {
+      firebaseUser.reload();
       return HomePage();
     }
     return SignInPage();

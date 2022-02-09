@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:germanenapp/screens/sign_up_page.dart';
 
-import '../sign_up_page.dart';
 
 class Widgets {
   Widget buildSignUn(context) {

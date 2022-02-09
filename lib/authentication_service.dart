@@ -4,7 +4,7 @@ import 'package:germanenapp/validators/Database.dart';
 // @dart=2.9
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth;
-  //final Database _database;
+  final Database database = Database();
 
   //Database(this._database)
   AuthenticationService(this._firebaseAuth);
@@ -19,6 +19,7 @@ class AuthenticationService {
     await _firebaseAuth.signOut();
   }
 
+
   /// There are a lot of different ways on how you can do exception handling.
   /// This is to make it as easy as possible but a better way would be to
   /// use your own custom class that would take the exception and return better
@@ -27,7 +28,7 @@ class AuthenticationService {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
 
-      //_database.setUsernameFromDisplayname(_firebaseAuth.currentUser.displayName);
+      database.setUsernameFromDisplayname(_firebaseAuth.currentUser.displayName);
       debugPrint('auth debug: ${_firebaseAuth.currentUser.displayName}');
       return "Signed in";
     } on FirebaseAuthException catch (e) {

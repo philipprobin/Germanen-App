@@ -5,10 +5,12 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:germanenapp/validators/Database.dart';
 import 'package:germanenapp/widgets/submit_button.dart';
 import 'package:provider/src/provider.dart';
 
-import 'authentication_service.dart';
+import '../authentication_service.dart';
+
 
 class SignUpPage extends StatefulWidget{
   const SignUpPage({Key? key}) : super(key: key);
@@ -67,7 +69,7 @@ class _SignUpState extends State<SignUpPage> {
 
                     _TextField(label: 'Name', controller: _nameController,
                         icon: Icon(Icons.account_circle),
-                        validator: _requiredValidator),
+                        validator: _userIdValidator),
                     const SizedBox(height: 10),
 
                     _TextField(label: 'Email', controller: _emailController,
@@ -117,6 +119,17 @@ class _SignUpState extends State<SignUpPage> {
     }
     return null;
   }
+
+  String? _userIdValidator(String? text){
+    if(text==null|| text.trim().isEmpty){
+      return 'Bitte gib einen Benutzernamen ein.';
+    }
+    if(Database.checkUserIdExists(userId: '${text.trim()}') == true){
+      return 'Dieser Nutzername ist schon vergeben.';
+    }
+    return null;
+  }
+
   String? _confirmPasswordValidator(String? confirmPasswordText){
     if(confirmPasswordText==null|| confirmPasswordText.trim().isEmpty){
       return 'Bitte gib einen Benutzernamen ein.';
@@ -192,9 +205,6 @@ class _SignUpState extends State<SignUpPage> {
       }, child: Text('Ok'))],
     ));
   }
-
-
-
 
 }
 
