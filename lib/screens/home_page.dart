@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:germanenapp/screens/add_screen.dart';
@@ -7,23 +6,23 @@ import 'package:provider/provider.dart';
 
 import '../authentication_service.dart';
 import 'item_list.dart';
+
 // @dart=2.9
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        elevation: 0,
-        title: AppToolbar(
-          sectionName: 'Germanen-App',
-      )
-      ),
+          elevation: 0,
+          title: AppToolbar(
+            sectionName: 'Germanen-App',
+          )),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){
+        onPressed: () {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => AddScreen(),
+            MaterialPageRoute(
+              builder: (context) => AddScreen(),
             ),
           );
         },
@@ -42,12 +41,10 @@ class HomePage extends StatelessWidget {
               children: <Widget>[
                 ItemList(),
                 ElevatedButton(
-                    onPressed:  () {
-
-                    },
-                    child: Text("Neu Laden"),
+                  onPressed: () {},
+                  child: Text("Neu Laden"),
                 ),
-                Text("Hello ${FirebaseAuth.instance.currentUser.displayName}"),
+                Text("Hello ${FirebaseAuth.instance.currentUser?.displayName}"),
                 ElevatedButton(
                   onPressed: () {
                     context.read<AuthenticationService>().signOut();
@@ -61,8 +58,6 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-
-
 }
 /*
 class MytemList extends StatelessWidget {

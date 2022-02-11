@@ -14,7 +14,7 @@ class ItemList extends StatelessWidget {
 
     return StreamBuilder<QuerySnapshot>(
         stream: Database.readItems(),
-        builder: (context,  AsyncSnapshot<QuerySnapshot> snapshot)  {
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
               child: CircularProgressIndicator(),
@@ -26,16 +26,14 @@ class ItemList extends StatelessWidget {
 
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Text("Loading");
-          }
-          else if (snapshot.hasData) {
-
+          } else if (snapshot.hasData) {
             debugPrint("snapshotdata ${snapshot}");
             return ListView.separated(
                 physics: NeverScrollableScrollPhysics(),
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
-                  Map< String, dynamic > data = snapshot.data!.docs[index].data();
+                  Map<String, dynamic> data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
                   String title = data['title'];
                   String description = data['description'];
                   String userId = data['userId'];
@@ -47,22 +45,19 @@ class ItemList extends StatelessWidget {
                     date: date,
                   );
                 },
-
-                separatorBuilder: (context, index) =>
-                    SizedBox(height: 16.0,),
-                itemCount:  snapshot.data!.docs.length//snapshot.docs.length,snapshot.data.lenght
-            );
+                separatorBuilder: (context, index) => SizedBox(
+                      height: 16.0,
+                    ),
+                itemCount: snapshot.data!.docs
+                    .length //snapshot.docs.length,snapshot.data.lenght
+                );
           }
-          return Center(
-            child: Text("Keine Daten")
-          );
-        }
-    );
+          return Center(child: Text("Keine Daten"));
+        });
   }
 }
 
 class _ContentField extends StatelessWidget {
-
   final String userId;
   final String title;
   final String description;
@@ -79,52 +74,60 @@ class _ContentField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color:  Color(0xFFDDDDDD),
+        color: Color(0xFFDDDDDD),
         borderRadius: BorderRadius.circular(8),
       ),
-      child:  Padding(
+      child: Padding(
           padding: const EdgeInsets.all(8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 userId,
-                style: TextStyle(fontSize: 12, color: Color(0x80121212), ),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Color(0x80121212),
+                ),
               ),
               Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 4,
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
                         ),
-                        Text(
-                          title,
-                          style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold ,),
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        description,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
                         ),
-                        SizedBox(
-                          height: 4,
-                        ),
-                        Text(
-                          description,
-                          style: TextStyle(fontSize: 14, color: Colors.black, ),
-                        ),
-                      ]
-                  ),
+                      ),
+                    ]),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children:[
-                  Text(
-                    date,
-                    style: TextStyle(fontSize: 12, color: Color(0x80121212), ),
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                Text(
+                  date,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Color(0x80121212),
                   ),
-                ]
-              ),
+                ),
+              ]),
             ],
-          )
-      ),
+          )),
     );
   }
 }
