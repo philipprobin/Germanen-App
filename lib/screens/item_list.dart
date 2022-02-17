@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:germanenapp/validators/Database.dart';
 
 class ItemList extends StatelessWidget {
@@ -33,16 +34,19 @@ class ItemList extends StatelessWidget {
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
-                  Map<String, dynamic> data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                  Map<String, dynamic> data =
+                      snapshot.data!.docs[index].data() as Map<String, dynamic>;
                   String title = data['title'];
                   String description = data['description'];
                   String userId = data['userId'];
                   String date = data['date'];
+                  List images = data['images'];
                   return _ContentField(
                     userId: userId,
                     title: title,
                     description: description,
                     date: date,
+                    images: images,
                   );
                 },
                 separatorBuilder: (context, index) => SizedBox(
@@ -62,12 +66,14 @@ class _ContentField extends StatelessWidget {
   final String title;
   final String description;
   final String date;
+  final List<dynamic> images;
 
   const _ContentField({
     required this.userId,
     required this.title,
     required this.description,
     required this.date,
+    required this.images,
   });
 
   @override
@@ -113,6 +119,26 @@ class _ContentField extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(vertical: 2.0),
+                        height: 100,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: images.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Container(
+                              padding: EdgeInsets.all(2),
+                              color: Colors.grey[800],
+                              child: Center(
+                                child: Image.network(images[index]),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ]),

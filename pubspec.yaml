@@ -28,7 +28,8 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   file_picker: ^4.0.3
-
+  open_file:
+  permission_handler: ^9.0.1
 
   flutter:
     sdk: flutter

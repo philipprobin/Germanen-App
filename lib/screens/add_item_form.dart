@@ -1,9 +1,11 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:germanenapp/validators/Database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:open_file/open_file.dart';
 
 import '../custom_form_field.dart';
 
@@ -22,8 +24,12 @@ class AddItemForm extends StatefulWidget {
 
 class _AddItemFormState extends State<AddItemForm> {
   final _addItemFormKey = GlobalKey<FormState>();
+  List<File> files = [];
+
+  final Database database = Database();
 
   bool _isProcessing = false;
+  bool _isLookingForFiles = false;
 
   String getTitle = "";
   String getDescription = "";
@@ -33,7 +39,6 @@ class _AddItemFormState extends State<AddItemForm> {
 
   @override
   Widget build(BuildContext context) {
-    final Database database = Database();
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
@@ -93,30 +98,35 @@ class _AddItemFormState extends State<AddItemForm> {
                       ),
                       ElevatedButton(
                         onPressed: () async {
-                          final results = await FilePicker.platform.pickFiles(
-                            allowMultiple: false,
-                            type: FileType.custom,
-                            allowedExtensions: ['png', 'jpg'],
-                          );
-                          if (results == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Keine Datei ausgewählt.'),
-                              ),
-                            );
-                            return null;
-                          }
-                          final path = results.files.single.path!;
-                          final fileName = results.files.single.name;
-                          debugPrint('path $path');
-                          debugPrint('fileName $fileName');
-
-                          database
-                              .uploadFile(path, fileName)
-                              .then((value) => debugPrint('DONE'));
+                          files = (await pickFiles())!;
+                          debugPrint('dateien $files');
                         },
-                        child: Text('Upload'),
+                        child: Text('Pick File'),
                       ),
+                      _isLookingForFiles
+                          ? Container()
+                          : Container(
+                              padding: EdgeInsets.symmetric(vertical: 2.0),
+                              height: 100,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: files.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Container(
+                                    padding: EdgeInsets.all(2),
+                                    color: Colors.grey[800],
+                                    child: Image.file(
+                                      File(files[index].path.toString()),
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                      alignment: FractionalOffset.topCenter,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                      /*
                       Container(
                         height: MediaQuery.of(context).size.height * 0.2,
                         child: FutureBuilder(
@@ -156,6 +166,8 @@ class _AddItemFormState extends State<AddItemForm> {
                           },
                         ),
                       ),
+
+                       */
                       _isProcessing
                           ? Padding(
                               padding: const EdgeInsets.all(16),
@@ -184,9 +196,16 @@ class _AddItemFormState extends State<AddItemForm> {
                                     setState(() {
                                       _isProcessing = true;
                                     });
+
+                                    ///upload image
+
                                     await Database.addItem(
                                         title: getTitle,
-                                        description: getDescription);
+                                        description: getDescription,
+                                        files: files
+
+
+                                    );
 
                                     setState(() {
                                       _isProcessing = false;
@@ -231,9 +250,68 @@ class _AddItemFormState extends State<AddItemForm> {
     getDescription = text;
     return null;
   }
+
+
+
+  Future<List<File>?> pickFiles() async {
+    final result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.custom,
+      allowedExtensions: ['png', 'jpg'],
+    );
+    if (result == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Keine Datei ausgewählt.'),
+        ),
+      );
+      setState(() {
+        _isLookingForFiles = true;
+      });
+      return null;
+    } else {
+      setState(() {
+        _isLookingForFiles = false;
+      });
+      //creates new Fileslist
+      return result.paths.map((path) => File(path!)).toList();
+    }
+  }
+
+  void viewFile(PlatformFile file) {
+    OpenFile.open(file.path);
+  }
 }
 
 /*
+
+ElevatedButton(
+                        onPressed: () async {
+                          final results = await FilePicker.platform.pickFiles(
+                            allowMultiple: false,
+                            type: FileType.custom,
+                            allowedExtensions: ['png', 'jpg'],
+                          );
+                          if (results == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Keine Datei ausgewählt.'),
+                              ),
+                            );
+                            return null;
+                          }
+
+                          final path = results.files.single.path!;
+                          final fileName = results.files.single.name;
+                          debugPrint('path $path');
+                          debugPrint('fileName $fileName');
+
+                          database
+                              .uploadFile(path, fileName)
+                              .then((value) => debugPrint('DONE'));
+                        },
+                        child: Text('Pick File'),
+                      ),
 
 return Card(
                                   margin:

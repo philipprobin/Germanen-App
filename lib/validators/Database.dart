@@ -29,16 +29,37 @@ class Database {
   }
 
   //uploadFile
-  Future<void> uploadFile(
+  static Future<String> uploadFile(
     String filePath,
     String fileName,
   ) async {
     File file = File(filePath);
 
     try {
-      await storage.ref('images/$fileName').putFile(file);
+      UploadTask uploadTask = storage.ref('images/$fileName').putFile(file);
+      return await (await uploadTask)
+          .storage
+          .ref('images/$fileName')
+          .getDownloadURL();
     } on firebase_core.FirebaseException catch (e) {
       debugPrint('ERROR ${e}');
+      return "";
+    }
+  }
+
+  static Future<void> _addPathToDatabase(
+      String url, DocumentReference<Object?>? doc) async {
+    try {
+      if (doc != null) {
+        await doc
+            .update({
+              'images': FieldValue.arrayUnion([url])
+            })
+            .whenComplete(() => print("Bilder hochgeladen"))
+            .catchError((e) => print(e));
+      }
+    } catch (e) {
+      debugPrint('Error addPathToDatabase');
     }
   }
 
@@ -47,6 +68,8 @@ class Database {
     List<Map<String, dynamic>> files = [];
     final firebase_storage.ListResult results =
         await storage.ref('images/').listAll();
+
+
     debugPrint('hasSize ${results}');
     final List<firebase_storage.Reference> allFiles = results.items;
     debugPrint('hasSize2 ${allFiles}');
@@ -65,6 +88,7 @@ class Database {
   static Future<void> addItem({
     required String title,
     required String description,
+    required List<File> files,
   }) async {
     String date = DateFormat('dd.MM.yyyy').format(DateTime.now());
 
@@ -73,16 +97,34 @@ class Database {
       "description": description,
       "date": '$date',
       "userId": FirebaseAuth.instance.currentUser?.displayName,
+      "images": [],
     };
-    await _mainCollection
+
+    //get doc
+    var doc = await _mainCollection
         .add(data)
         .whenComplete(() => print("übergeben an Firebase"))
         .catchError((e) => print(e));
+
+    //save to right folder
+    if (files.isNotEmpty) {
+      files.forEach((file) async {
+        //get last proper filepath
+        var splitList = file.path.split('/');
+        //safe Url List to db
+        _addPathToDatabase(
+            await uploadFile(
+                file.path, '${doc.id}/${splitList[splitList.length - 1]}'),
+            doc
+        );
+        debugPrint('filepath ${file.path} file ${splitList[splitList.length - 1]}');
+      });
+    }
   }
 
   static Future<void> updateItem({
     required String title,
-    required String desciption,
+    required String description,
     required String docId,
   }) async {
     DocumentReference documentReference =
@@ -90,7 +132,7 @@ class Database {
 
     Map<String, dynamic> data = <String, dynamic>{
       "title": title,
-      "description": desciption,
+      "description": description,
     };
 
     await documentReference
