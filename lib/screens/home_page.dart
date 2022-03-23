@@ -1,65 +1,80 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:germanenapp/screens/add_screen.dart';
-import 'package:germanenapp/widgets/app_toolbar.dart';
-import 'package:provider/provider.dart';
+import 'package:germanenapp/screens/sempro_page.dart';
 
-import '../authentication_service.dart';
-import 'item_list.dart';
+import 'content_page.dart';
 
-// @dart=2.9
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int currentIndex = 0;
+  List<Widget> _widgetOptions = <Widget>[
+    ContentPage(),
+    SemproPage(),
+    //Text('Home'),
+    //Text('Sempro'),
+  ];
+
+  void _onItemTap(int index) {
+    setState(() {
+      currentIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-          elevation: 0,
-          title: AppToolbar(
-            sectionName: 'Germanen-App',
-          )),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => AddScreen(),
-            ),
-          );
-        },
-        backgroundColor: Colors.red,
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
-          size: 32,
-        ),
-      ),
       body: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              children: <Widget>[
-                ItemList(),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: Text("Neu Laden"),
-                ),
-                Text("Hello ${FirebaseAuth.instance.currentUser?.displayName}"),
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<AuthenticationService>().signOut();
-                  },
-                  child: Text("Sign out"),
-                ),
-              ],
+        child: _widgetOptions.elementAt(currentIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
+        showUnselectedLabels: false,
+        onTap: _onItemTap,
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'adH'),
+          BottomNavigationBarItem(
+            icon: Image.asset(
+              'assets/brochure_grey.png',
+              height: 25,
+            ),
+            label: 'SemPro',
+            activeIcon: Image.asset(
+              'assets/brochure_red.png',
+              height: 25,
             ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
+
 /*
+body: screens[currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
+        showUnselectedLabels: false,
+        onTap: (index) => setState(() => currentIndex = index),
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'adH'),
+          BottomNavigationBarItem(
+            icon: Image.asset(
+              'assets/brochure_grey.png',
+              height: 25,
+            ),
+            label: 'SemPro',
+            activeIcon: Image.asset(
+              'assets/brochure_red.png',
+              height: 25,
+            ),
+          ),
+        ],
+      ),
+
+
 class MytemList extends StatelessWidget {
   const MytemList({Key? key}) : super(key: key);
 

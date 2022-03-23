@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:germanenapp/validators/Database.dart';
+import 'package:germanenapp/network/Database.dart';
 import 'package:germanenapp/widgets/submit_button.dart';
 import 'package:provider/src/provider.dart';
 

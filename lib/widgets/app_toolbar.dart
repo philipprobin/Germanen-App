@@ -24,7 +24,6 @@ class AppToolbar extends StatelessWidget {
 
           children: [
             Image.asset('assets/zirkel.png', height: 50,),
-            Image.asset('assets/gefaltete_broschüre_50.png', height: 50,),
         ],
       )
     );

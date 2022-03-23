@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:germanenapp/validators/Database.dart';
+import 'package:germanenapp/network/Database.dart';
 // @dart=2.9
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth;
@@ -28,7 +28,7 @@ class AuthenticationService {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
 
-      database.setUsernameFromDisplayname(_firebaseAuth.currentUser?.displayName);
+      database.setUsernameFromDisplayName(_firebaseAuth.currentUser?.displayName);
       debugPrint('auth debug: ${_firebaseAuth.currentUser?.displayName}');
       return "Signed in";
     } on FirebaseAuthException catch (e) {

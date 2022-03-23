@@ -17,19 +17,23 @@ class Database {
   static String? userId;
   static bool exist = false;
 
-  String? setUsernameFromDisplayname(String? displayname) {
-    userId = displayname;
+  String? setUsernameFromDisplayName(String? displayName) {
+    userId = displayName;
+  }
+
+  String? getDisplayName() {
+    return FirebaseAuth.instance.currentUser?.displayName;
   }
 
   //downloadImage
-  static Future<String> downloadUrl(String imageName) async {
+  static Future<String> downloadImageUrl(String imageName) async {
     String downloadURL =
         await storage.ref('images/$imageName').getDownloadURL();
     return downloadURL;
   }
 
   //uploadFile
-  static Future<String> uploadFile(
+  static Future<String> uploadImageFile(
     String filePath,
     String fileName,
   ) async {
@@ -63,12 +67,11 @@ class Database {
     }
   }
 
-  //listFiles snapshot.data!.elementAt(index)),
+  //unnecessary function for fetching all 'images/'
   Future<List<Map<String, dynamic>>> loadImages() async {
     List<Map<String, dynamic>> files = [];
     final firebase_storage.ListResult results =
         await storage.ref('images/').listAll();
-
 
     debugPrint('hasSize ${results}');
     final List<firebase_storage.Reference> allFiles = results.items;
@@ -85,26 +88,27 @@ class Database {
   }
 
   //add item
-  static Future<void> addItem({
+  Future<void> addItem({
     required String title,
     required String description,
     required List<File> files,
   }) async {
-    String date = DateFormat('dd.MM.yyyy').format(DateTime.now());
+    //Sting date = DateFormat('yyyy.MM.dd.Hms').format(DateTime.now());
+    String date = DateTime.now().toString();
+    debugPrint('date $date');
 
     Map<String, dynamic> data = <String, dynamic>{
       "title": title,
       "description": description,
       "date": '$date',
-      "userId": FirebaseAuth.instance.currentUser?.displayName,
+      "userId": getDisplayName(),
       "images": [],
     };
 
     //get doc
     var doc = await _mainCollection
         .add(data)
-        .whenComplete(() => print("übergeben an Firebase"))
-        .catchError((e) => print(e));
+        .whenComplete(() => print("übergeben an Firebase"));
 
     //save to right folder
     if (files.isNotEmpty) {
@@ -113,11 +117,11 @@ class Database {
         var splitList = file.path.split('/');
         //safe Url List to db
         _addPathToDatabase(
-            await uploadFile(
+            await uploadImageFile(
                 file.path, '${doc.id}/${splitList[splitList.length - 1]}'),
-            doc
-        );
-        debugPrint('filepath ${file.path} file ${splitList[splitList.length - 1]}');
+            doc);
+        debugPrint(
+            'filepath ${file.path} file ${splitList[splitList.length - 1]}');
       });
     }
   }
@@ -142,7 +146,7 @@ class Database {
   }
 
   static Stream<QuerySnapshot> readItems() {
-    return _mainCollection.snapshots();
+    return _mainCollection.orderBy('date').snapshots();
   }
 
   static bool checkUserIdExists({
@@ -159,15 +163,26 @@ class Database {
     }
   }
 
-  static Future<void> deleteItem({
-    required String docId,
+  Future<void> deleteItem({
+    required String date,
   }) async {
-    DocumentReference documentReference =
-        _mainCollection.doc(userId).collection('items').doc(docId);
+    var snapshot = await _mainCollection.where('date', isEqualTo: date).get();
+    debugPrint('snapshot: ${snapshot.docs}');
+    for (var doc in snapshot.docs) {
+      await doc.reference
+          .delete()
+          .whenComplete(() => print("gelöscht in Firebase"))
+          .catchError((e) => print(e));
+    }
+  }
 
-    await documentReference
-        .delete()
-        .whenComplete(() => print("gelöscht in Firebase"))
-        .catchError((e) => print(e));
+  static Future<String> getSemproUri() async {
+    String url = '';
+    var snapshot = await _firestore.collection('sempros').orderBy('date').get();
+    if (snapshot.docs.isNotEmpty) {
+      Map<String, dynamic> data = snapshot.docs[0].data();
+      url = data['url'];
+    }
+    return url;
   }
 }

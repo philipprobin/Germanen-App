@@ -8,7 +8,7 @@ if (localPropertiesFile.exists()) {
 
 def flutterRoot = localProperties.getProperty('flutter.sdk')
 if (flutterRoot == null) {
-    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+    throw new Exception("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
 }
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
@@ -38,12 +38,16 @@ android {
         jvmTarget = '1.8'
     }
 
+    lintOptions {
+        checkReleaseBuilds false
+    }
+
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).Could not determine pdfview
         applicationId "com.example.germanenapp"
         minSdkVersion 19//flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion

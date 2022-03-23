@@ -27,9 +27,14 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  syncfusion_flutter_pdfviewer: ^19.4.56-beta
+  flutter_pdfview: ^1.2.2
+  path_provider: ^2.0.9
   file_picker: ^4.0.3
   open_file:
   permission_handler: ^9.0.1
+  photo_view: ^0.13.0
+  carousel_slider: ^4.0.0-nullsafety.0
 
   flutter:
     sdk: flutter
@@ -42,7 +47,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   provider: ^6.0.1
-  cloud_firestore: ^2.2.2
+  cloud_firestore: ^3.1.10
 
 dev_dependencies:
   flutter_launcher_name: "^0.0.1"
@@ -74,7 +79,8 @@ flutter:
   assets:
     - assets/Germanen-Wappen.jpg
     - assets/zirkel.png
-    - assets/gefaltete_broschüre_50.png
+    - assets/brochure_grey.png
+    - assets/brochure_red.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

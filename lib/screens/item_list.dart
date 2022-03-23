@@ -1,16 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
-import 'package:germanenapp/validators/Database.dart';
+import 'package:intl/intl.dart';
+import 'package:germanenapp/network/Database.dart';
+import 'gallery_photo_zoomable_view.dart';
 
 class ItemList extends StatelessWidget {
   const ItemList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-
     debugPrint("Item List Class");
 
     return StreamBuilder<QuerySnapshot>(
@@ -30,6 +28,7 @@ class ItemList extends StatelessWidget {
           } else if (snapshot.hasData) {
             debugPrint("snapshotdata ${snapshot}");
             return ListView.separated(
+                reverse: true,
                 physics: NeverScrollableScrollPhysics(),
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
@@ -52,9 +51,7 @@ class ItemList extends StatelessWidget {
                 separatorBuilder: (context, index) => SizedBox(
                       height: 16.0,
                     ),
-                itemCount: snapshot.data!.docs
-                    .length //snapshot.docs.length,snapshot.data.lenght
-                );
+                itemCount: snapshot.data!.docs.length);
           }
           return Center(child: Text("Keine Daten"));
         });
@@ -68,7 +65,7 @@ class _ContentField extends StatelessWidget {
   final String date;
   final List<dynamic> images;
 
-  const _ContentField({
+  _ContentField({
     required this.userId,
     required this.title,
     required this.description,
@@ -76,8 +73,11 @@ class _ContentField extends StatelessWidget {
     required this.images,
   });
 
+  final Database database = Database();
+
   @override
   Widget build(BuildContext context) {
+    final DateFormat formatter = DateFormat('dd.MM.yyyy');
     return Container(
       decoration: BoxDecoration(
         color: Color(0xFFDDDDDD),
@@ -88,21 +88,34 @@ class _ContentField extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                userId,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Color(0x80121212),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text(
+                  userId,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Color(0x80121212),
+                  ),
                 ),
-              ),
+                database.getDisplayName() != userId
+                    ? Container()
+                    : PopupMenuButton(
+                        itemBuilder: (BuildContext context) {
+                          return [
+                            PopupMenuItem(
+                              value: 'delete',
+                              child: Text('löschen'),
+                            )
+                          ];
+                        },
+                        onSelected: (String value) =>
+                            actionPopUpItemSelected(value, userId, date),
+                      ),
+              ]),
               Padding(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(0),
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        height: 4,
-                      ),
                       Text(
                         title,
                         style: TextStyle(
@@ -121,9 +134,19 @@ class _ContentField extends StatelessWidget {
                           color: Colors.black,
                         ),
                       ),
+
+                      //in construction
+                      images.length == 0
+                          ? Container()
+                          : Container(
+                              child: GalleryPhotoZoomableView(
+                                images: images,
+                              ),
+                            ),
                       SizedBox(
                         height: 4,
                       ),
+                      /*
                       Container(
                         padding: EdgeInsets.symmetric(vertical: 2.0),
                         height: 100,
@@ -141,11 +164,16 @@ class _ContentField extends StatelessWidget {
                           },
                         ),
                       ),
+                      SizedBox(
+                        height: 4,
+                      ),
+
+                       */
                     ]),
               ),
               Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                 Text(
-                  date,
+                  formatter.format(DateTime.parse(date)).toString(),
                   style: TextStyle(
                     fontSize: 12,
                     color: Color(0x80121212),
@@ -156,9 +184,35 @@ class _ContentField extends StatelessWidget {
           )),
     );
   }
+
+  actionPopUpItemSelected(String value, String userId, String date) {
+    if (value == 'delete' && userId == database.getDisplayName()) {
+      database.deleteItem(date: date);
+    }
+  }
 }
 
 /*
+
+Container(
+                        padding: EdgeInsets.symmetric(vertical: 2.0),
+                        height: 100,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: images.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Container(
+                              padding: EdgeInsets.all(2),
+                              color: Colors.grey[800],
+                              child: Center(
+                                child: Image.network(images[index]),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
+
       return ListView.separated(
                 physics: NeverScrollableScrollPhysics(),
                 scrollDirection: Axis.vertical,

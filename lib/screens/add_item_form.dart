@@ -4,8 +4,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:germanenapp/validators/Database.dart';
-import 'package:open_file/open_file.dart';
+import 'package:germanenapp/network/Database.dart';
+//import 'package:open_file/open_file.dart';
 
 import '../custom_form_field.dart';
 
@@ -199,7 +199,7 @@ class _AddItemFormState extends State<AddItemForm> {
 
                                     ///upload image
 
-                                    await Database.addItem(
+                                    await database.addItem(
                                         title: getTitle,
                                         description: getDescription,
                                         files: files
@@ -277,10 +277,12 @@ class _AddItemFormState extends State<AddItemForm> {
       return result.paths.map((path) => File(path!)).toList();
     }
   }
-
+/*
   void viewFile(PlatformFile file) {
     OpenFile.open(file.path);
   }
+
+ */
 }
 
 /*
