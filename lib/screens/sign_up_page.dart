@@ -155,6 +155,14 @@ class _SignUpState extends State<SignUpPage> {
         email: _emailController.text,
         password: _passwordController.text,
       );
+      //create beerList entry
+      await FirebaseFirestore.instance
+          .collection('beers')
+          .doc(_nameController.text)
+          .set({
+        'beers': [],
+        'paidBeers': [],
+      });
       //update user profile
       await FirebaseAuth.instance.currentUser!
           .updateDisplayName(_nameController.text);

@@ -52,21 +52,17 @@ class _AddItemFormState extends State<AddItemForm> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      SizedBox(
-                        height: 24,
-                      ),
-                      Text(
-                        'Title',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 22,
-                          letterSpacing: 1,
-                          fontWeight: FontWeight.bold,
+                      TextFormField(
+                        decoration: InputDecoration(
+                          hintText: 'Gib einen Titel ein ...',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide(
+                              width: 1.4,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 8.0),
-                      CustomFormField(
-                        textInputAction: TextInputAction.next,
                         controller: _titleController,
                         focusNode: widget.titleFocusNode,
                         keyboardType: TextInputType.text,
@@ -76,17 +72,22 @@ class _AddItemFormState extends State<AddItemForm> {
                       SizedBox(
                         height: 24,
                       ),
-                      Text(
-                        'Description',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 22,
-                          letterSpacing: 1,
-                          fontWeight: FontWeight.bold,
+                      TextFormField(
+                        decoration: InputDecoration(
+                          contentPadding: new EdgeInsets.only(
+                            top: 0,
+                            left: 12,
+                            bottom: 100.0,
+                          ),
+                          hintText: 'Gib eine Beschreibung ein ...',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide(
+                              width: 1.4,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 8.0),
-                      CustomFormField(
                         textInputAction: TextInputAction.next,
                         controller: _descriptionController,
                         focusNode: widget.descriptionFocusNode,
@@ -126,48 +127,7 @@ class _AddItemFormState extends State<AddItemForm> {
                                 },
                               ),
                             ),
-                      /*
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.2,
-                        child: FutureBuilder(
-                          ///loadImages
-                          future: database.loadImages(),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<List<Map<String, dynamic>>>
-                                  snapshot) {
-                            if (snapshot.connectionState ==
-                                    ConnectionState.done &&
-                                snapshot.hasData) {
-                              return ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                shrinkWrap: true,
-                                itemCount: snapshot.data?.length ?? 0,
-                                itemBuilder: (context, index) {
-                                  final Map<String, dynamic> image =
-                                      snapshot.data![index];
-                                  return Container(
-                                    child: Card(
-                                      child: Container(
-                                        child: Center(
-                                          child: Image.network(image['url']),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                            }
-                            if (snapshot.connectionState ==
-                                    ConnectionState.waiting ||
-                                !snapshot.hasData) {
-                              return CircularProgressIndicator();
-                            }
-                            return Container();
-                          },
-                        ),
-                      ),
 
-                       */
                       _isProcessing
                           ? Padding(
                               padding: const EdgeInsets.all(16),
@@ -176,53 +136,34 @@ class _AddItemFormState extends State<AddItemForm> {
                                     AlwaysStoppedAnimation<Color>(Colors.red),
                               ),
                             )
-                          : Container(
-                              padding: const EdgeInsets.all(16.0),
-                              width: double.maxFinite,
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all(Colors.red),
-                                    shape: MaterialStateProperty.all(
-                                        RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ))),
-                                onPressed: () async {
-                                  widget.titleFocusNode.unfocus();
-                                  widget.descriptionFocusNode.unfocus();
-
-                                  if (_addItemFormKey.currentState!
-                                      .validate()) {
-                                    setState(() {
-                                      _isProcessing = true;
-                                    });
-
-                                    ///upload image
-
-                                    await database.addItem(
-                                        title: getTitle,
-                                        description: getDescription,
-                                        files: files
-
-
-                                    );
-
-                                    setState(() {
-                                      _isProcessing = false;
-                                    });
-                                    Navigator.of(context).pop();
-                                  }
-                                },
-                                child: Text(
-                                  'Hinzufügen',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    letterSpacing: 2,
-                                  ),
-                                ),
+                          : FloatingActionButton(
+                              child: Icon(
+                                Icons.send,
+                                color: Colors.white,
+                                size: 32,
                               ),
+                              onPressed: () async {
+                                widget.titleFocusNode.unfocus();
+                                widget.descriptionFocusNode.unfocus();
+
+                                if (_addItemFormKey.currentState!.validate()) {
+                                  setState(() {
+                                    _isProcessing = true;
+                                  });
+
+                                  ///upload image
+
+                                  await database.addItem(
+                                      title: getTitle,
+                                      description: getDescription,
+                                      files: files);
+
+                                  setState(() {
+                                    _isProcessing = false;
+                                  });
+                                  Navigator.of(context).pop();
+                                }
+                              },
                             ),
                     ],
                   ),
@@ -250,8 +191,6 @@ class _AddItemFormState extends State<AddItemForm> {
     getDescription = text;
     return null;
   }
-
-
 
   Future<List<File>?> pickFiles() async {
     final result = await FilePicker.platform.pickFiles(

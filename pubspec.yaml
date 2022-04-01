@@ -27,6 +27,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  hexcolor: ^2.0.6
   syncfusion_flutter_pdfviewer: ^19.4.56-beta
   flutter_pdfview: ^1.2.2
   path_provider: ^2.0.9
@@ -81,6 +82,8 @@ flutter:
     - assets/zirkel.png
     - assets/brochure_grey.png
     - assets/brochure_red.png
+    - assets/broschüre_dunkelrot.png
+    - assets/beer_background.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

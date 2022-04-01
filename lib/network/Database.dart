@@ -11,6 +11,7 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 final FirebaseStorage storage = FirebaseStorage.instance;
 final CollectionReference _mainCollection = _firestore.collection('posts');
 final CollectionReference _usersCollection = _firestore.collection('users');
+final CollectionReference _beerCollection = _firestore.collection('beers');
 
 class Database {
   static int? itemCount = -1;
@@ -149,6 +150,10 @@ class Database {
     return _mainCollection.orderBy('date').snapshots();
   }
 
+  static Stream<QuerySnapshot> readBeers() {
+    return _beerCollection.snapshots();
+  }
+
   static bool checkUserIdExists({
     required String userId,
   }) {
@@ -184,5 +189,23 @@ class Database {
       url = data['url'];
     }
     return url;
+  }
+
+  Future<void> submitBeerAmount(String value) async {
+    String date = DateTime.now().toString();
+    Map<String, dynamic> data = <String, dynamic>{
+      "amount": int.parse(value),
+      "date": '$date',
+    };
+
+    DocumentReference<Object?>? doc =
+        await _beerCollection.doc('${getDisplayName()}');
+
+    await doc
+        .update({
+          'beers': FieldValue.arrayUnion([data])
+        })
+        .whenComplete(() => print("Bilder hochgeladen"))
+        .catchError((e) => print(e));
   }
 }

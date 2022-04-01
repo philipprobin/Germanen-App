@@ -1,17 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:germanenapp/screens/user_list.dart';
+
 import '../widgets/app_toolbar.dart';
 import 'add_screen.dart';
-import 'item_list.dart';
 
-class ContentPage extends StatefulWidget {
-  const ContentPage({Key? key}) : super(key: key);
+class BeerListPage extends StatefulWidget {
+  const BeerListPage({Key? key}) : super(key: key);
 
   @override
-  _ContentPageState createState() => _ContentPageState();
+  _BeerListPageState createState() => _BeerListPageState();
 }
 
-class _ContentPageState extends State<ContentPage> {
+class _BeerListPageState extends State<BeerListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +20,7 @@ class _ContentPageState extends State<ContentPage> {
       appBar: AppBar(
           elevation: 0,
           title: AppToolbar(
-            sectionName: 'Germanen-App',
+            sectionName: 'Germanen App',
           )),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -31,18 +32,18 @@ class _ContentPageState extends State<ContentPage> {
         },
         backgroundColor: Theme.of(context).primaryColor,
         child: Icon(
-          Icons.add,
+          Icons.subject,
           color: Colors.white,
           size: 32,
         ),
       ),
-      body: Center(
+      body: Container(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               children: <Widget>[
-                ItemList(),
+                UserList()
               ],
             ),
           ),

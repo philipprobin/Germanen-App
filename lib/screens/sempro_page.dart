@@ -13,23 +13,19 @@ class SemproPage extends StatefulWidget {
   _SemproPageState createState() => _SemproPageState();
 }
 
-
 class _SemproPageState extends State<SemproPage> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: FutureBuilder<SfPdfViewer>(
+    return Center(
+      child: FutureBuilder<SfPdfViewer>(
           future: openPDF(),
-          builder:  (context, AsyncSnapshot snapshot) {
+          builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               return snapshot.data;
             } else {
               return CircularProgressIndicator();
             }
-          }
-        ),
-      ),
+          }),
     );
   }
 
