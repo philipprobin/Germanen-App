@@ -154,6 +154,38 @@ class Database {
     return _beerCollection.snapshots();
   }
 
+  static Stream<DocumentSnapshot> readUserBeers(
+    String? userId,
+  ) {
+    return _beerCollection.doc(userId).snapshots();
+  }
+
+  static Future<List<Object>> getBeersCollection(String userId) async {
+    final DateFormat formatter = DateFormat('dd.MM.yyyy');
+
+    DocumentSnapshot<Object?>? doc = await _beerCollection
+        .doc(userId)
+        .get();
+
+    if (doc.exists) {
+      Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+      var beers = data!['beers'];
+      int totalAmountOfBeers = 0;
+      List<String> openBeers = [];
+      for (var entry in beers) {
+        if (entry['amount'] != null) {
+          var longDate = entry['date'];
+          String date = formatter.format(DateTime.parse(longDate)).toString();
+          openBeers.add('${entry['amount']} Oetti vom $date');
+          totalAmountOfBeers += entry['amount'] as int;
+          debugPrint('amount ${entry['amount']} date ${entry['date']}');
+        }
+      }
+      return [totalAmountOfBeers, openBeers];
+    }
+    return [[],0];
+  }
+
   static bool checkUserIdExists({
     required String userId,
   }) {
@@ -201,11 +233,55 @@ class Database {
     DocumentReference<Object?>? doc =
         await _beerCollection.doc('${getDisplayName()}');
 
-    await doc
-        .update({
-          'beers': FieldValue.arrayUnion([data])
-        })
-        .whenComplete(() => print("Bilder hochgeladen"))
-        .catchError((e) => print(e));
+    await doc.update({
+      'beers': FieldValue.arrayUnion([data])
+    }).catchError((e) => print(e));
+  }
+
+  Future<void> payBeers() async {
+    String date = DateTime.now().toString();
+
+    DocumentSnapshot<Object?>? doc =
+        await _beerCollection.doc('${getDisplayName()}').get();
+
+    if (doc.exists) {
+      Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+      var beers = data!['beers'];
+      int totalAmountOfBeers = 0;
+      for (var entry in beers) {
+        if (entry['amount'] != null) {
+          totalAmountOfBeers += entry['amount'] as int;
+          debugPrint('amount ${entry['amount']} date ${entry['date']}');
+        }
+      }
+
+      DocumentReference<Object?>? documentReference =
+          await _beerCollection.doc('${getDisplayName()}');
+
+      //transfer to paidArray
+      await documentReference
+          .update({'paidBeers': FieldValue.arrayUnion(data['beers'])})
+          .whenComplete(() => print("beers paid"))
+          .catchError((e) => print(e));
+
+      //add paydate with amount
+      Map<String, dynamic> payday = <String, dynamic>{
+        "totalAmountPaid": totalAmountOfBeers,
+        "onDate": '$date',
+      };
+
+      await documentReference
+          .update({
+            'paidBeers': FieldValue.arrayUnion([payday])
+          })
+          .whenComplete(() => print("paydate"))
+          .catchError((e) => print(e));
+
+      //set Beers array to zero
+      await documentReference
+          .update({'beers': FieldValue.arrayRemove(beers)})
+          .whenComplete(() => print("paydate"))
+          .catchError((e) => print(e));
+    }
   }
 }

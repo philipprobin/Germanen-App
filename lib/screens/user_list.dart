@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:germanenapp/network/Database.dart';
+import 'package:germanenapp/screens/protocol_list.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UserList extends StatelessWidget {
   const UserList({Key? key}) : super(key: key);
@@ -25,32 +28,33 @@ class UserList extends StatelessWidget {
           } else if (snapshot.hasData) {
             debugPrint("snapshotdata ${snapshot}");
             return ListView.separated(
-                reverse: true,
-                physics: NeverScrollableScrollPhysics(),
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  Map<String, dynamic> data =
-                      snapshot.data!.docs[index].data() as Map<String, dynamic>;
-                  var beers = data['beers'];
-                  var sum = 0;
-                  for (var entry in beers) {
-                    if (entry['amount'] != null) {
-                      sum += entry['amount'] as int;
-                    }
+              reverse: true,
+              physics: NeverScrollableScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                Map<String, dynamic> data =
+                    snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                var beers = data['beers'];
+                var sum = 0;
+                for (var entry in beers) {
+                  if (entry['amount'] != null) {
+                    sum += entry['amount'] as int;
                   }
-                  String userId = snapshot.data!.docs[index].id;
-                  return _BeerListEntry(
-                    userId: userId,
-                    beers: sum,
-                  );
-                },
-                separatorBuilder: (context, index) => Divider(
-                      color: Color(0xFFF1F1F1),
-                      height: 20,
-                      thickness: 1,
-                    ),
-                itemCount: snapshot.data!.docs.length);
+                }
+                String userId = snapshot.data!.docs[index].id;
+                return _BeerListEntry(
+                  userId: userId,
+                  beers: sum,
+                );
+              },
+              separatorBuilder: (context, index) => Divider(
+                color: Color(0xFFF1F1F1),
+                height: 20,
+                thickness: 1,
+              ),
+              itemCount: snapshot.data!.docs.length,
+            );
           }
           return Center(child: Text("Keine Daten"));
         });
@@ -100,37 +104,21 @@ class _BeerListEntry extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    //beer
-                    userId != database.getDisplayName()
-                        ? ElevatedButton.icon(
-                            onPressed: null,
-                            icon: Icon(
-                              Icons.sports_bar,
-                              //color: Colors.white, //Theme.of(context).primaryColor,
-                              size: 24.0,
-                            ),
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) {
-                                  return Colors.grey.shade300;
-                                },
-                              ),
-                            ),
-                            label: Text('Oetti'),
-                          )
-                        : ElevatedButton.icon(
-                            icon: Icon(
-                              Icons.sports_bar,
-                              color: Colors
-                                  .white, //Theme.of(context).primaryColor,
-                              size: 24.0,
-                            ),
-                            label: Text('Oetti'),
-                            onPressed: () {
-                              openDialog(context: context);
-                            },
+                    IconButton(
+                      icon: Icon(
+                        Icons.receipt_long,
+                        color: Theme.of(context).primaryColor,
+                        size: 24.0,
+
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ProtocolListPage(userId: userId,),
                           ),
+                        );
+                      },
+                    ),
 
                     VerticalDivider(
                       color: Colors.black,
@@ -146,36 +134,58 @@ class _BeerListEntry extends StatelessWidget {
 
                     //pay
 
+                    //other user
                     userId != database.getDisplayName()
-                        ? OutlinedButton.icon(
-                            onPressed: null,
+                        ? IconButton(
                             icon: Icon(
                               Icons.euro_rounded,
-                              //color: Colors.white, //Theme.of(context).primaryColor,
+                              color:
+                                  Colors.grey, //Theme.of(context).primaryColor,
                               size: 24.0,
                             ),
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) {
-                                  return Colors.white;
-                                },
-                              ),
-                            ),
-                            label: Text('Zahlen'),
+                            onPressed: () {},
                           )
-                        : OutlinedButton.icon(
-                            style: OutlinedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                side: BorderSide(
-                                    color: Theme.of(context).primaryColor)),
+                        : IconButton(
                             icon: Icon(
                               Icons.euro_rounded,
                               color: Theme.of(context).primaryColor,
                               size: 24.0,
                             ),
-                            label: Text('Zahlen'),
-                            onPressed: () {},
+                            onPressed: () {
+                              openPaymentDialog(context: context);
+                            },
+                          ),
+
+                    VerticalDivider(
+                      color: Colors.black,
+                      //color of divider
+                      width: 10,
+                      //width space of divider
+                      thickness: 0,
+                      //thickness of divier line
+                      indent: 10,
+                      //Spacing at the top of divider.
+                      endIndent: 10, //Spacing at the bottom of divider.
+                    ),
+                    //beer
+                    userId != database.getDisplayName()
+                        ? IconButton(
+                            onPressed: (){},
+                            icon: Icon(
+                              Icons.sports_bar,
+                              color: Colors.grey, //Theme.of(context).primaryColor,
+                              size: 24.0,
+                            ),
+                          )
+                        : IconButton(
+                            icon: Icon(
+                              Icons.sports_bar,
+                              color: Theme.of(context).primaryColor,
+                              size: 24.0,
+                            ),
+                            onPressed: () {
+                              openAddBeerDialog(context: context);
+                            },
                           ),
                   ],
                 ),
@@ -189,7 +199,7 @@ class _BeerListEntry extends StatelessWidget {
 
   final _formKey = GlobalKey<FormState>();
 
-  Future openDialog({required BuildContext context}) => showDialog(
+  Future openAddBeerDialog({required BuildContext context}) => showDialog(
         context: context,
         builder: (context) => AlertDialog(
           contentPadding: EdgeInsets.zero,
@@ -241,6 +251,177 @@ class _BeerListEntry extends StatelessWidget {
           ),
         ),
       );
+
+  Future openPaymentDialog({required BuildContext context}) => showDialog(
+        useRootNavigator: false,
+        context: context,
+        builder: (BuildContext dialogContext) => AlertDialog(
+          contentPadding: EdgeInsets.zero,
+          titlePadding: EdgeInsets.all(40),
+          title: Text(
+            'Wie möchtest dein Bier bezahlen?',
+            textAlign: TextAlign.center,
+            //style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          content: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Paypal',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, color: Colors.blue),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFDEDEDE),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: GestureDetector(
+                          child: Text("https://www.paypal.me/philirobsow",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 16,
+                              )),
+                          onTap: () async {
+                            const url = 'https://www.paypal.me/philirobsow';
+                            if (await canLaunch(url)) launch(url);
+                          },
+                        ),
+                      ),
+                      IconButton(
+                          icon: const Icon(Icons.content_copy),
+                          onPressed: () {
+                            _copyToClipboard(
+                                text: 'https://www.paypal.me/philirobsow',
+                                context: dialogContext);
+                          }),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Text(
+                  'Banküberweisung',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, color: Colors.blue),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFDEDEDE),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          'DE90 3706 0590 0000 0008 74',
+                          maxLines: 3,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                          icon: const Icon(Icons.content_copy),
+                          onPressed: () {
+                            _copyToClipboard(
+                                text: 'DE90 3706 0590 0000 0008 74',
+                                context: dialogContext);
+                          }),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Text(
+                  'Bar',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, color: Colors.blue),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFDEDEDE),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Direkt an den Bierwart.',
+                        maxLines: 3,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Text(
+                    'Du hast dein Bier bereits bezahlt?',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    IconButton(
+                        color: Colors.red,
+                        iconSize: 48,
+                        icon: const Icon(Icons.cancel),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        }),
+                    IconButton(
+                        color: Colors.green,
+                        iconSize: 48,
+                        icon: const Icon(
+                          Icons.check_circle,
+                        ),
+                        onPressed: () {
+                          database.payBeers();
+                          Navigator.of(context).pop();
+                        }),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+  Future<void> _copyToClipboard(
+      {required String text, required BuildContext context}) async {
+    await Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text('Kopiert'),
+    ));
+  }
 
   String? _confirmBeerAmount(String? number) {
     try {

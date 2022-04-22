@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
             label: 'SemPro',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home_rounded),
             label: 'adH',
           ),
           BottomNavigationBarItem(
