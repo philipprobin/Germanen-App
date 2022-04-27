@@ -160,30 +160,23 @@ class Database {
     return _beerCollection.doc(userId).snapshots();
   }
 
-  static Future<List<Object>> getBeersCollection(String userId) async {
-    final DateFormat formatter = DateFormat('dd.MM.yyyy');
-
+  static Future<int> getBeersCollection(String userId, String beerType) async {
     DocumentSnapshot<Object?>? doc = await _beerCollection
         .doc(userId)
         .get();
 
     if (doc.exists) {
       Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
-      var beers = data!['beers'];
+      var beers = data![beerType];
       int totalAmountOfBeers = 0;
-      List<String> openBeers = [];
       for (var entry in beers) {
         if (entry['amount'] != null) {
-          var longDate = entry['date'];
-          String date = formatter.format(DateTime.parse(longDate)).toString();
-          openBeers.add('${entry['amount']} Oetti vom $date');
           totalAmountOfBeers += entry['amount'] as int;
-          debugPrint('amount ${entry['amount']} date ${entry['date']}');
         }
       }
-      return [totalAmountOfBeers, openBeers];
+      return totalAmountOfBeers;
     }
-    return [[],0];
+    return 0;
   }
 
   static bool checkUserIdExists({
