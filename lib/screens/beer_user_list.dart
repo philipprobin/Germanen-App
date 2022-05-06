@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:germanenapp/network/Database.dart';
-import 'package:germanenapp/screens/protocol_list.dart';
+import 'package:germanenapp/screens/protocol_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UserList extends StatelessWidget {
@@ -241,6 +241,7 @@ class _BeerListEntry extends StatelessWidget {
                           _formKey.currentState!.validate()) {
                         debugPrint('beer $value');
                         database.submitBeerAmount(value);
+                        Database.updateTotalBeerAmount(userId, 'beers');
                         Navigator.of(context).pop();
                       }
                     },
@@ -404,6 +405,7 @@ class _BeerListEntry extends StatelessWidget {
                           Icons.check_circle,
                         ),
                         onPressed: () {
+                          //deletes from beers
                           database.payBeers();
                           Navigator.of(context).pop();
                         }),

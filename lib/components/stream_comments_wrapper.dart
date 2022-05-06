@@ -1,0 +1,63 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+
+typedef ItemBuilder<T> = Widget Function(
+  BuildContext context,
+  DocumentSnapshot doc,
+);
+
+class CommentsStreamWrapper extends StatelessWidget {
+  final Stream<QuerySnapshot> stream;
+  final ItemBuilder<DocumentSnapshot> itemBuilder;
+  final Axis scrollDirection;
+  final bool shrinkWrap;
+  final ScrollPhysics physics;
+  final EdgeInsets padding;
+
+  const CommentsStreamWrapper({
+    Key? key,
+    required this.stream,
+    required this.itemBuilder,
+    this.scrollDirection = Axis.vertical,
+    this.shrinkWrap = false,
+    this.physics = const ClampingScrollPhysics(),
+    this.padding = const EdgeInsets.only(bottom: 2.0, left: 2.0),
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: stream,
+      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasData) {
+
+          //Map<String, dynamic> data =  snapshot.data!.docs.data() as Map<String, dynamic>;
+          var list = snapshot.data!.docs;
+          debugPrint("stream_comments: ${snapshot.data!.docs.length}");
+          return list.length == 0
+              ? Container(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: Text('Keine Kommentare'),
+                    ),
+                  ),
+                )
+              : ListView.builder(
+                  reverse: true,
+                  padding: padding,
+                  scrollDirection: scrollDirection,
+                  itemCount: list.length,
+                  shrinkWrap: shrinkWrap,
+                  physics: physics,
+                  itemBuilder: (BuildContext context, int index) {
+                    return itemBuilder(context, list[index]);
+                  },
+                );
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
+  }
+}

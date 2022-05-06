@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:germanenapp/screens/sempro_page.dart';
 
-import 'beer_list_page.dart';
+import 'beer_page.dart';
 import 'content_page.dart';
 
 class HomePage extends StatefulWidget {

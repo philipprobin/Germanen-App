@@ -102,7 +102,7 @@ class _AddItemFormState extends State<AddItemForm> {
                           files = (await pickFiles())!;
                           debugPrint('dateien $files');
                         },
-                        child: Text('Pick File'),
+                        child: Text('Foto(s) auswählen'),
                       ),
                       _isLookingForFiles
                           ? Container()

@@ -5,6 +5,7 @@ import 'package:germanenapp/widgets/Widgets.dart';
 import 'package:germanenapp/widgets/submit_button.dart';
 import 'package:provider/src/provider.dart';
 
+import 'package:germanenapp/network/Database.dart';
 import '../authentication_service.dart';
 
 class SignInPage extends StatelessWidget {
@@ -42,6 +43,7 @@ class SignInPage extends StatelessWidget {
                       label: 'Email',
                       controller: emailController,
                       icon: Icon(Icons.mail),
+                      inputAction: TextInputAction.next,
                     ),
 
                     const SizedBox(height: 15),
@@ -49,13 +51,17 @@ class SignInPage extends StatelessWidget {
                       controller: passwordController,
                       label: "Passwort",
                       icon: Icon(Icons.vpn_key),
+                      inputAction: TextInputAction.done,
                     ),
                     SubmitButton(
-                      onPressed: () {
-                        context.read<AuthenticationService>().signIn(
+                      onPressed: () async {
+                        String? responds = await context.read<AuthenticationService>().signIn(
                           email: emailController.text.trim(),
                           password: passwordController.text.trim(),
                         );
+                        if(responds!= 'Signed in'){
+                          Database.handleSignUpError('Anmeldung', responds!, context);
+                        }
                       },
                       text: 'Anmelden',
                       padding: 16,
@@ -99,11 +105,13 @@ class _TextField extends StatelessWidget {
   final Icon icon;
   final TextInputType? keyboardType;
   final FormFieldValidator<String>? validator;
+  final TextInputAction inputAction;
 
   const _TextField({
     required this.label,
     required this.controller,
     required this.icon,
+    required this.inputAction,
     this.validator,
     this.password = false,
     this.keyboardType,
@@ -125,6 +133,7 @@ class _TextField extends StatelessWidget {
         keyboardType: keyboardType,
         obscureText: password,
         validator: validator,
+        textInputAction: inputAction,
       ),
     );
   }

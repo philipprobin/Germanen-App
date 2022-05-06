@@ -34,11 +34,8 @@ dependencies:
   file_picker: ^4.0.3
   open_file:
   permission_handler: ^9.0.1
-  photo_view: ^0.13.0
   carousel_slider: ^4.0.0-nullsafety.0
-
-  flutter:
-    sdk: flutter
+  like_button: ^2.0.4
 
   url_launcher: ^6.0.20
   #Firebase
@@ -51,10 +48,20 @@ dependencies:
   provider: ^6.0.1
   cloud_firestore: ^3.1.10
 
+  flutter:
+    sdk: flutter
+
+dependency_overrides:
+  photo_view:
+    git:
+      url: https://github.com/bluefireteam/photo_view
+      ref: master
+
 dev_dependencies:
   flutter_launcher_name: "^0.0.1"
   flutter_test:
     sdk: flutter
+
 
 flutter_launcher_name:
   name: "Germanen-App"

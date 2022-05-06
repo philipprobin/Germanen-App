@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
@@ -5,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -12,6 +15,8 @@ final FirebaseStorage storage = FirebaseStorage.instance;
 final CollectionReference _mainCollection = _firestore.collection('posts');
 final CollectionReference _usersCollection = _firestore.collection('users');
 final CollectionReference _beerCollection = _firestore.collection('beers');
+final CollectionReference _commentsCollection =
+    _firestore.collection('comments');
 
 class Database {
   static int? itemCount = -1;
@@ -104,6 +109,7 @@ class Database {
       "date": '$date',
       "userId": getDisplayName(),
       "images": [],
+      "docId": ""
     };
 
     //get doc
@@ -124,6 +130,13 @@ class Database {
         debugPrint(
             'filepath ${file.path} file ${splitList[splitList.length - 1]}');
       });
+    }
+
+    //set docId
+    var snapshot = await _mainCollection.where('date', isEqualTo: date).get();
+    debugPrint('snapshot: ${snapshot.docs}');
+    for (var doc in snapshot.docs) {
+      doc.reference.update({'docId': doc.id});
     }
   }
 
@@ -151,22 +164,36 @@ class Database {
   }
 
   static Stream<QuerySnapshot> readBeers() {
-    return _beerCollection.snapshots();
+    return _beerCollection.orderBy('totalBeers').snapshots();
   }
 
-  static Stream<DocumentSnapshot> readUserBeers(
-    String? userId,
+
+  static Stream<QuerySnapshot> readComments(
+    String postId,
   ) {
+    debugPrint(
+        "Database readComments ${_commentsCollection.where('postId', isEqualTo: postId).snapshots()}");
+    return _commentsCollection.where('postId', isEqualTo: postId).snapshots();
+    //order .orderBy('timestamp', descending: true)
+  }
+
+  static Stream<DocumentSnapshot> readUserBeers(String? userId) {
     return _beerCollection.doc(userId).snapshots();
   }
 
-  static Future<int> getBeersCollection(String userId, String beerType) async {
-    DocumentSnapshot<Object?>? doc = await _beerCollection
-        .doc(userId)
-        .get();
+  //create set and get beer amount
+  static void updateTotalBeerAmount(String userId, String beerType) async {
+    //beer type beer, paidBeer
+    DocumentReference<Object?>? documentReference =
+        await _beerCollection.doc(userId);
 
-    if (doc.exists) {
-      Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+    DocumentSnapshot<Object?>? documentSnapshot =
+        await _beerCollection.doc(userId).get();
+
+    if (documentSnapshot.exists) {
+      debugPrint('snap exists');
+      Map<String, dynamic>? data =
+          documentSnapshot.data() as Map<String, dynamic>?;
       var beers = data![beerType];
       int totalAmountOfBeers = 0;
       for (var entry in beers) {
@@ -174,9 +201,16 @@ class Database {
           totalAmountOfBeers += entry['amount'] as int;
         }
       }
-      return totalAmountOfBeers;
+      if (beerType == 'beers') {
+        await documentReference.update(
+            {'totalBeers': totalAmountOfBeers}).catchError((e) => print(e));
+      }
+      if (beerType == 'paidBeers') {
+        debugPrint('pay beers');
+        await documentReference.update(
+            {'totalPaidBeers': totalAmountOfBeers}).catchError((e) => print(e));
+      }
     }
-    return 0;
   }
 
   static bool checkUserIdExists({
@@ -194,16 +228,46 @@ class Database {
   }
 
   Future<void> deleteItem({
-    required String date,
+    required String postId,
   }) async {
-    var snapshot = await _mainCollection.where('date', isEqualTo: date).get();
-    debugPrint('snapshot: ${snapshot.docs}');
-    for (var doc in snapshot.docs) {
-      await doc.reference
-          .delete()
-          .whenComplete(() => print("gelöscht in Firebase"))
-          .catchError((e) => print(e));
+    var doc = await _mainCollection.doc(postId).get();
+    await doc.reference
+        .delete()
+        .whenComplete(() => print("gelöscht in Firebase"))
+        .catchError((e) => print(e));
+  }
+
+  static Future<void> setLike({
+    required String postId,
+    required bool isLiked,
+    required String userId,
+  }) async {
+    var doc = await _mainCollection.doc(postId).get();
+    try {
+      isLiked
+          ? await doc.reference.update({
+              'likes': FieldValue.arrayRemove([userId])
+            })
+          : await doc.reference.update({
+              'likes': FieldValue.arrayUnion([userId])
+            });
+    } catch (e) {
+      await doc.reference.set({
+        'likes': FieldValue.arrayUnion([userId])
+      });
     }
+  }
+
+  static Future<int> getLike({
+    required String postId,
+  }) async {
+    var doc = await _mainCollection.doc(postId).get();
+    var likes = [];
+    if (doc.exists) {
+      Map<String, dynamic> data = doc.get('likes');
+      likes = data['likes'];
+    }
+    return likes.length;
   }
 
   static Future<String> getSemproUri() async {
@@ -231,6 +295,7 @@ class Database {
     }).catchError((e) => print(e));
   }
 
+  //todo fix
   Future<void> payBeers() async {
     String date = DateTime.now().toString();
 
@@ -276,5 +341,66 @@ class Database {
           .whenComplete(() => print("paydate"))
           .catchError((e) => print(e));
     }
+    Database.updateTotalBeerAmount(getDisplayName()!, 'beers');
+    Database.updateTotalBeerAmount(getDisplayName()!, 'paidBeers');
+  }
+
+  static void handleSignUpError(String type, String e, BuildContext context) {
+    String messageToDisplay;
+    debugPrint('exception $e');
+    switch (e) {
+      case 'email-already-in-use':
+        messageToDisplay = 'Diese E-Mail wird schon verwendet';
+        break;
+      case 'invalid-email':
+        messageToDisplay = 'Die E-Mail ist ungültig';
+        break;
+      case 'operation-not-allowed':
+        messageToDisplay = 'Diese Operation ist nicht erlaubt';
+        break;
+      case 'weak-password':
+        messageToDisplay = 'Das Passwort ist zu schwach';
+        break;
+      case 'user-not-found':
+        messageToDisplay = 'Falsche E-Mail';
+        break;
+      case 'wrong-password':
+        messageToDisplay = 'Falsches Passwort';
+        break;
+
+      default:
+        messageToDisplay = e;
+        break;
+    }
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              title: Text('$type fehlgeschlagen'),
+              content: Text(messageToDisplay),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Ok'))
+              ],
+            ));
+  }
+
+  static uploadComment(String userId, String comment, String postId) async {
+    String date = DateTime.now().toString();
+    debugPrint('date $date');
+
+    Map<String, dynamic> data = <String, dynamic>{
+      "userId": userId,
+      "comment": comment,
+      "timestamp": '$date',
+      "postId": postId,
+    };
+
+    //upload
+    await _commentsCollection
+        .add(data)
+        .whenComplete(() => print("übergeben an Firebase"));
   }
 }

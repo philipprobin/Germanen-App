@@ -27,7 +27,7 @@ class AppToolbar extends StatelessWidget {
           ),
           IconButton(
             onPressed: () => {context.read<AuthenticationService>().signOut()},
-            color: Colors.black,
+            color: Colors.white,
             icon: Icon(Icons.logout),
           ),
         ],

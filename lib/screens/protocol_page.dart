@@ -16,13 +16,8 @@ class ProtocolListPage extends StatefulWidget {
 }
 
 class _ProtocolListPageState extends State<ProtocolListPage> {
-  Future<int>? beerAmount;
-  Future<int>? paidBeerAmount;
-
   @override
   Widget build(BuildContext context) {
-    beerAmount = Database.getBeersCollection(widget.userId, 'beers');
-    paidBeerAmount = Database.getBeersCollection(widget.userId, 'paidBeers');
     final DateFormat formatter = DateFormat('dd.MM.yyyy');
     return Scaffold(
       backgroundColor: Colors.white,
@@ -57,38 +52,39 @@ class _ProtocolListPageState extends State<ProtocolListPage> {
                     ),
 
                     //open beers
-                    beerAmount == null
-                        ? Container(
-                            height: 20,
-                            color: Colors.blue,
-                          )
-                        : FutureBuilder(
-                            future: beerAmount,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                return RichText(
-                                  text: TextSpan(
-                                    children: <TextSpan>[
-                                      TextSpan(text: 'Hat '),
-                                      TextSpan(
-                                          text: '${snapshot.data}',
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold)),
-                                      TextSpan(text: ' Oetti offen:'),
-                                    ],
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                return Container(
-                                  height: 20,
-                                  color: Colors.red,
-                                );
-                              }
-                            }),
+                    StreamBuilder(
+                        stream: Database.readUserBeers(
+                          widget.userId,
+                        ),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<DocumentSnapshot> snapshot) {
+                          if (snapshot.hasData) {
+                            Map<String, dynamic> data =
+                                snapshot.data!.data() as Map<String, dynamic>;
+                            var totalBeers = data['totalBeers'];
+                            return RichText(
+                              text: TextSpan(
+                                children: <TextSpan>[
+                                  TextSpan(text: 'Hat '),
+                                  TextSpan(
+                                      text: '${totalBeers}',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  TextSpan(text: ' Oetti offen:'),
+                                ],
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Container(
+                              height: 20,
+                              color: Colors.red,
+                            );
+                          }
+                        }),
 
                     Padding(
                       padding: const EdgeInsets.all(12.0),
@@ -133,38 +129,39 @@ class _ProtocolListPageState extends State<ProtocolListPage> {
                     ),
 
                     //paid total beers
-                    paidBeerAmount == null
-                        ? Container(
-                            height: 20,
-                            color: Colors.blue,
-                          )
-                        : FutureBuilder(
-                            future: paidBeerAmount,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                return RichText(
-                                  text: TextSpan(
-                                    children: <TextSpan>[
-                                      TextSpan(text: 'Hat '),
-                                      TextSpan(
-                                          text: '${snapshot.data}',
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold)),
-                                      TextSpan(text: ' Oetti bezahlt:'),
-                                    ],
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                return Container(
-                                  height: 20,
-                                  color: Colors.red,
-                                );
-                              }
-                            }),
+                    StreamBuilder(
+                        stream: Database.readUserBeers(
+                          widget.userId,
+                        ),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<DocumentSnapshot> snapshot) {
+                          if (snapshot.hasData) {
+                            Map<String, dynamic> data =
+                                snapshot.data!.data() as Map<String, dynamic>;
+                            var totalBeers = data['totalPaidBeers'];
+                            return RichText(
+                              text: TextSpan(
+                                children: <TextSpan>[
+                                  TextSpan(text: 'Hat '),
+                                  TextSpan(
+                                      text: '${totalBeers}',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  TextSpan(text: ' Oetti bezahlt:'),
+                                ],
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Container(
+                              height: 20,
+                              color: Colors.red,
+                            );
+                          }
+                        }),
 
                     //paid beers
                     Padding(

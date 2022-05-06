@@ -19,7 +19,8 @@ class SignUpPage extends StatefulWidget {
 class _SignUpState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
 
-  final _nameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _secondNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
@@ -46,7 +47,7 @@ class _SignUpState extends State<SignUpPage> {
           child: Container(
             color: Colors.white,
             child: Padding(
-              padding: const EdgeInsets.all(18.0),
+              padding: const EdgeInsets.all(16.0),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -61,31 +62,46 @@ class _SignUpState extends State<SignUpPage> {
                         )),
                     const SizedBox(height: 10),
                     _TextField(
-                        label: 'Name',
-                        controller: _nameController,
-                        icon: Icon(Icons.account_circle),
-                        validator: _userIdValidator),
+                      label: 'Vorname',
+                      controller: _firstNameController,
+                      icon: Icon(Icons.account_circle),
+                      validator: _userIdValidator,
+                      inputAction: TextInputAction.next,
+                    ),
                     const SizedBox(height: 10),
                     _TextField(
-                        label: 'Email',
-                        controller: _emailController,
-                        icon: Icon(Icons.mail),
-                        validator: _requiredValidator),
+                      label: 'Nachname',
+                      controller: _secondNameController,
+                      icon: Icon(Icons.account_circle),
+                      validator: _userIdValidator,
+                      inputAction: TextInputAction.next,
+                    ),
                     const SizedBox(height: 10),
                     _TextField(
-                        label: 'Passwort',
-                        controller: _passwordController,
-                        icon: Icon(Icons.vpn_key),
-                        validator: _requiredValidator,
-                        password: true),
+                      label: 'Email',
+                      controller: _emailController,
+                      icon: Icon(Icons.mail),
+                      validator: _requiredValidator,
+                      inputAction: TextInputAction.next,
+                    ),
                     const SizedBox(height: 10),
                     _TextField(
-                        label: 'Bestätige Passwort',
-                        controller: _confirmController,
-                        icon: Icon(Icons.vpn_key),
-                        validator: _confirmPasswordValidator,
-                        password: true),
+                      label: 'Passwort',
+                      controller: _passwordController,
+                      icon: Icon(Icons.vpn_key),
+                      validator: _requiredValidator,
+                      password: true,
+                      inputAction: TextInputAction.next,
+                    ),
                     const SizedBox(height: 10),
+                    _TextField(
+                      label: 'Bestätige Passwort',
+                      controller: _confirmController,
+                      icon: Icon(Icons.vpn_key),
+                      validator: _confirmPasswordValidator,
+                      password: true,
+                      inputAction: TextInputAction.done,
+                    ),
                     if (loading) ...[
                       const Center(child: CircularProgressIndicator()),
                     ],
@@ -113,20 +129,27 @@ class _SignUpState extends State<SignUpPage> {
 
   String? _requiredValidator(String? text) {
     if (text == null || text.trim().isEmpty) {
-      return 'Bitte gib einen Benutzernamen ein.';
+      return 'Bitte gib etwas ein.';
+    }
+    if (text == 'email-already-in-use') {
+      return 'Email wird schon verwendet';
     }
     return null;
   }
 
   String? _userIdValidator(String? text) {
+    debugPrint('docname if true');
     if (text == null || text.trim().isEmpty) {
       return 'Bitte gib einen Benutzernamen ein.';
     }
-    bool checkDb = Database.checkUserIdExists(userId: '${text.trim()}');
+
+    bool checkDb = Database.checkUserIdExists(
+        userId:
+            '${_firstNameController.text.trim()} ${_secondNameController.text.trim()}');
     debugPrint('docname if $bool');
     if (checkDb) {
       debugPrint('docname if true');
-      return 'Dieser Nutzername ist schon vergeben.';
+      return 'Diese Kombination ist schon vergeben.';
     }
     return null;
   }
@@ -158,17 +181,21 @@ class _SignUpState extends State<SignUpPage> {
       //create beerList entry
       await FirebaseFirestore.instance
           .collection('beers')
-          .doc(_nameController.text)
+          .doc(
+              '${_firstNameController.text.trim()} ${_secondNameController.text.trim()}')
           .set({
         'beers': [],
         'paidBeers': [],
+        'totalBeers': 0,
+        'totalPaidBeers': 0,
       });
       //update user profile
-      await FirebaseAuth.instance.currentUser!
-          .updateDisplayName(_nameController.text);
+      await FirebaseAuth.instance.currentUser!.updateDisplayName(
+          '${_firstNameController.text.trim()} ${_secondNameController.text.trim()}');
       await FirebaseFirestore.instance
           .collection('users')
-          .doc(_nameController.text)
+          .doc(
+              '${_firstNameController.text.trim()} ${_secondNameController.text.trim()}')
           .set({
         'email': _emailController.text,
       });
@@ -183,46 +210,14 @@ class _SignUpState extends State<SignUpPage> {
     } on FirebaseAuthException catch (e) {
       log('createUserWithEmail exception log');
       debugPrint('createUserWithEmail exception debug');
-      _handleSignUpError(e);
+      Database.handleSignUpError('Registrierung', e.code, context);
       setState(() {
         loading = false;
       });
     }
   }
 
-  void _handleSignUpError(FirebaseAuthException e) {
-    String messageToDisplay;
-    switch (e.code) {
-      case 'email-already-in-use':
-        messageToDisplay = 'Diese E-Mail wird schon verwendet';
-        break;
-      case 'invalid-email':
-        messageToDisplay = 'Die E-Mail ist ungültig';
-        break;
-      case 'operation-not-allowed':
-        messageToDisplay = 'Diese Operation ist nicht erlaubt';
-        break;
-      case 'weak-password':
-        messageToDisplay = 'Das Passwort ist zu schwach';
-        break;
-      default:
-        messageToDisplay = 'Unbekannter Fehler';
-        break;
-    }
-    showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-              title: Text('Anmelden fehlgeschlagen'),
-              content: Text(messageToDisplay),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Ok'))
-              ],
-            ));
-  }
+
 }
 
 class _TextField extends StatelessWidget {
@@ -231,12 +226,14 @@ class _TextField extends StatelessWidget {
   final bool password;
   final Icon icon;
   final TextInputType? keyboardType;
+  final TextInputAction inputAction;
   final FormFieldValidator<String>? validator;
 
   const _TextField({
     required this.label,
     required this.controller,
     required this.icon,
+    required this.inputAction,
     this.validator,
     this.password = false,
     this.keyboardType,
@@ -256,6 +253,7 @@ class _TextField extends StatelessWidget {
         keyboardType: keyboardType,
         obscureText: password,
         validator: validator,
+        textInputAction: inputAction,
       ),
     );
   }

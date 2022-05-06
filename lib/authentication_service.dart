@@ -32,7 +32,7 @@ class AuthenticationService {
       debugPrint('auth debug: ${_firebaseAuth.currentUser?.displayName}');
       return "Signed in";
     } on FirebaseAuthException catch (e) {
-      return e.message;
+      return e.code;
     }
   }
 

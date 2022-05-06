@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:germanenapp/screens/user_list.dart';
+import 'package:germanenapp/screens/beer_user_list.dart';
 import '../widgets/app_toolbar.dart';
 
 class BeerListPage extends StatefulWidget {

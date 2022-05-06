@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:germanenapp/widgets/like_button_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:germanenapp/network/Database.dart';
+import 'package:like_button/like_button.dart';
+import 'comment.dart';
 import 'gallery_photo_zoomable_view.dart';
 
 class ItemList extends StatelessWidget {
@@ -40,12 +43,17 @@ class ItemList extends StatelessWidget {
                   String userId = data['userId'];
                   String date = data['date'];
                   List images = data['images'];
-                  return _ContentField(
+                  String docId = data['docId'];
+                  List<dynamic> likes =
+                      data['likes']; //getLikes(data['likes']);
+                  return ContentField(
                     userId: userId,
                     title: title,
                     description: description,
                     date: date,
                     images: images,
+                    likes: likes,
+                    docId: docId
                   );
                 },
                 separatorBuilder: (context, index) => SizedBox(
@@ -56,21 +64,37 @@ class ItemList extends StatelessWidget {
           return Center(child: Text("Keine Daten"));
         });
   }
+/*
+
+  Object getLikes(Map<String,dynamic>? data) {
+    if(data == null){
+      return [];
+    }
+    else{
+      return data;
+    }
+  }
+
+   */
 }
 
-class _ContentField extends StatelessWidget {
+class ContentField extends StatelessWidget {
   final String userId;
   final String title;
   final String description;
   final String date;
+  final String docId;
   final List<dynamic> images;
+  final List<dynamic>? likes;
 
-  _ContentField({
+  ContentField({
     required this.userId,
     required this.title,
     required this.description,
     required this.date,
     required this.images,
+    required this.likes,
+    required this.docId,
   });
 
   final Database database = Database();
@@ -78,6 +102,8 @@ class _ContentField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DateFormat formatter = DateFormat('dd.MM.yyyy');
+
+    var displayName = database.getDisplayName();
     return Container(
       decoration: BoxDecoration(
         color: Color(0xFFDDDDDD),
@@ -108,7 +134,7 @@ class _ContentField extends StatelessWidget {
                           ];
                         },
                         onSelected: (String value) =>
-                            actionPopUpItemSelected(value, userId, date),
+                            actionPopUpItemSelected(value, userId, docId),
                       ),
               ]),
               Padding(
@@ -171,23 +197,56 @@ class _ContentField extends StatelessWidget {
                        */
                     ]),
               ),
-              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                Text(
-                  formatter.format(DateTime.parse(date)).toString(),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Color(0x80121212),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  LikeButtonWidget(
+                    postId: docId,
+                    userId: displayName,
+                    likes: likes,
                   ),
-                ),
-              ]),
+                  IconButton(
+                    icon: Icon(
+                      Icons.comment_rounded,
+                      color: Theme.of(context).primaryColor,
+                      size: 24.0,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => Comments(
+                            contentField: ContentField(
+                              userId: userId,
+                              title: title,
+                              description: description,
+                              date: date,
+                              images: images,
+                              likes: likes,
+                              docId: docId,
+
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  Text(
+                    formatter.format(DateTime.parse(date)).toString(),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color(0x80121212),
+                    ),
+                  ),
+                ],
+              ),
             ],
           )),
     );
   }
 
-  actionPopUpItemSelected(String value, String userId, String date) {
+  actionPopUpItemSelected(String value, String userId, String postId) {
     if (value == 'delete' && userId == database.getDisplayName()) {
-      database.deleteItem(date: date);
+      database.deleteItem(postId: postId);
     }
   }
 }
