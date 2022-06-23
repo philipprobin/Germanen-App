@@ -109,6 +109,7 @@ class Database {
       "date": '$date',
       "userId": getDisplayName(),
       "images": [],
+      "likes": [],
       "docId": ""
     };
 

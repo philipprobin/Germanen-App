@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 import 'authentication_service.dart';
 import 'screens/home_page.dart';
 
-// @dart=2.9
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -39,10 +38,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<AuthenticationService>(
+        Provider<AuthenticationService?>(
           create: (_) => AuthenticationService(FirebaseAuth.instance),
         ),
-        StreamProvider(
+        StreamProvider<User?>(
           create: (context) =>
               context.read<AuthenticationService>().authStateChanges,
           initialData: null,
@@ -65,7 +64,7 @@ class MyApp extends StatelessWidget {
 class AuthenticationWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final firebaseUser = context.watch<User>();
+    final firebaseUser = context.watch<User?>();
 
     if (firebaseUser != null) {
       firebaseUser.reload();
