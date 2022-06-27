@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +19,9 @@ class _SemproPageState extends State<SemproPage> {
       child: FutureBuilder<SfPdfViewer>(
           future: openPDF(),
           builder: (context, AsyncSnapshot snapshot) {
+            if(snapshot.hasError){
+              print(snapshot.error);
+            }
             if (snapshot.hasData) {
               return snapshot.data;
             } else {

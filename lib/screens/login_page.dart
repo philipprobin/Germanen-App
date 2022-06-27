@@ -6,7 +6,7 @@ import 'package:germanenapp/widgets/submit_button.dart';
 import 'package:provider/src/provider.dart';
 
 import 'package:germanenapp/network/Database.dart';
-import '../authentication_service.dart';
+import '../network/authentication_service.dart';
 
 class SignInPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();

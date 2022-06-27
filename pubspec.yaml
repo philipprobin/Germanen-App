@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -28,6 +28,8 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   hexcolor: ^2.0.6
+  image_picker: ^0.8.5+3
+
   syncfusion_flutter_pdfviewer: ^19.4.56-beta
   flutter_pdfview: ^1.2.2
   path_provider: ^2.0.9
@@ -36,6 +38,13 @@ dependencies:
   permission_handler: ^9.0.1
   carousel_slider: ^4.0.0-nullsafety.0
   like_button: ^2.0.4
+
+  expandable_page_view: ^1.0.14
+  camera:
+    git:
+      url: https://github.com/flutter/plugins
+      path: packages/camera/camera
+      ref: 9e46048ad2e1f085c1e8f6c77391fa52025e681f
 
   url_launcher: ^6.0.20
   #Firebase

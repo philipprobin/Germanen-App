@@ -1,13 +1,18 @@
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:germanenapp/network/Database.dart';
+import 'package:germanenapp/screens/take_photo.dart';
+import 'package:image_picker/image_picker.dart';
 //import 'package:open_file/open_file.dart';
 
-import '../custom_form_field.dart';
+import '../widgets/custom_form_field.dart';
+
+List<CameraDescription>? cameras;
 
 class AddItemForm extends StatefulWidget {
   final FocusNode titleFocusNode;
@@ -36,6 +41,30 @@ class _AddItemFormState extends State<AddItemForm> {
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+
+  //camera
+  late CameraDescription _cameraDescription;
+
+  @override
+  void initState() {
+    super.initState();
+    debugPrint("init");
+    availableCameras().then((cameras) {
+
+      debugPrint("availableCameras");
+      final camera = cameras
+          .where((camera) => camera.lensDirection == CameraLensDirection.back)
+          .toList()
+          .first;
+      setState(() {
+
+        debugPrint("setState");
+        _cameraDescription = camera;
+      });
+    }).catchError((err) {
+      print(err);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,10 +128,31 @@ class _AddItemFormState extends State<AddItemForm> {
                       ),
                       ElevatedButton(
                         onPressed: () async {
-                          files = (await pickFiles())!;
+                          files += (await selectImages())!;
                           debugPrint('dateien $files');
                         },
                         child: Text('Foto(s) auswählen'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final String? imagePath =
+                              await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => TakePhoto(
+                                camera: _cameraDescription,
+                              ),
+                            ),
+                          );
+
+                          if (imagePath != null) {
+                            setState(() {
+                              files.add(File(imagePath));
+                            });
+                          }
+
+                          debugPrint('dateien $files');
+                        },
+                        child: Text('Foto schießen'),
                       ),
                       _isLookingForFiles
                           ? Container()
@@ -176,6 +226,12 @@ class _AddItemFormState extends State<AddItemForm> {
     );
   }
 
+  Future<List<CameraDescription>> setUpCamera() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    return await availableCameras();
+  }
+
   String? _requiredTitleValidator(String? text) {
     if (text == null || text.trim().isEmpty) {
       return 'Bitte gib einen Text ein.';
@@ -192,8 +248,33 @@ class _AddItemFormState extends State<AddItemForm> {
     return null;
   }
 
+  final ImagePicker imagePicker = ImagePicker();
+
+  Future<List<File>?> selectImages() async {
+    final List<XFile>? selectedImages = await imagePicker.pickMultiImage(
+      imageQuality: 50,
+    );
+    if (selectedImages!.isNotEmpty) {
+      setState(() {
+        _isLookingForFiles = false;
+      });
+      return selectedImages.map((val) => File(val.path)).toList();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Keine Datei ausgewählt.'),
+        ),
+      );
+      setState(() {
+        _isLookingForFiles = true;
+      });
+      return null;
+    }
+  }
+/*
   Future<List<File>?> pickFiles() async {
     final result = await FilePicker.platform.pickFiles(
+      allowCompression: true,
       allowMultiple: true,
       type: FileType.custom,
       allowedExtensions: ['png', 'jpg'],
@@ -216,7 +297,7 @@ class _AddItemFormState extends State<AddItemForm> {
       return result.paths.map((path) => File(path!)).toList();
     }
   }
-/*
+
   void viewFile(PlatformFile file) {
     OpenFile.open(file.path);
   }

@@ -1,9 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:germanenapp/components/GalleryPhotoWrapper.dart';
 import 'package:germanenapp/components/GalleryThumbnail.dart';
 import 'package:germanenapp/models/galleryItemModel.dart';
+import 'package:germanenapp/widgets/widget_size.dart';
 
 class GalleryPhotoZoomableView extends StatefulWidget {
   final List<dynamic> images;
@@ -29,34 +31,26 @@ class _GalleryPhotoZoomableViewState extends State<GalleryPhotoZoomableView> {
     return Container(
       child: Column(
         children: <Widget>[
-          CarouselSlider(
-            items: itemList
-                .map(
-                  (e) => ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: Stack(
-                      fit: StackFit.loose,
-                      children: [
-                        GalleryItemThumbnail(
-                          galleryItemModel: GalleryItemModel(id: e),
-                          onTap: () {
-                            _open(context, current);
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-                .toList(),
-            options: CarouselOptions(
-                enableInfiniteScroll: false,
-                viewportFraction: 1.0,
-                //enlargeCenterPage: true,
-                onPageChanged: (index, reason) {
-                  setState(() {
-                    current = index;
-                  });
-                }),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            child: ExpandablePageView.builder(
+              physics: BouncingScrollPhysics(),
+              onPageChanged: (index) {
+                setState(() {
+                  current = index;
+                });
+              },
+              itemCount: itemList.length,
+              itemBuilder: (context, index) {
+
+                return GalleryItemThumbnail(
+                  galleryItemModel: GalleryItemModel(id: itemList[index]),
+                  onTap: () {
+                    _open(context, index);
+                  },
+                );
+              },
+            ),
           ),
           itemList.length == 1
               ? Container()
@@ -102,6 +96,7 @@ class _GalleryPhotoZoomableViewState extends State<GalleryPhotoZoomableView> {
     );
   }
 }
+
 /*
 CarouselSlider(
           items: galleries

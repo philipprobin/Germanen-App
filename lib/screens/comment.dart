@@ -133,88 +133,89 @@ class _CommentsState extends State<Comments> {
   }
 
   buildFullPost() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                widget.contentField.title,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  widget.contentField.title,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        Container(
-          height: 250.0,
-          width: MediaQuery.of(context).size.width - 20.0,
-          child: GalleryPhotoZoomableView(
-            images: widget.contentField.images,
-          ),//Text("cachedNetworkThing"),//cachedNetworkImage(widget.post.mediaUrl),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  LikeButtonWidget(
-                    userId: currentUserId(),
-                    likes: widget.contentField.likes,
-                    postId: widget.contentField.docId,
-                  ),
-                  Text(
-                    widget.contentField.description,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w800,
+          Container(
+            width: MediaQuery.of(context).size.width - 20.0,
+            child: GalleryPhotoZoomableView(
+              images: widget.contentField.images,
+            ),//Text("cachedNetworkThing"),//cachedNetworkImage(widget.post.mediaUrl),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    LikeButtonWidget(
+                      userId: currentUserId(),
+                      likes: widget.contentField.likes,
+                      postId: widget.contentField.docId,
                     ),
-                  ),
-                  SizedBox(height: 4.0),
-                  Row(
-                    children: [
-                      Text(
-                        formatter.format(DateTime.parse(widget.contentField.date)).toString(),//timeago.format(widget.post.timestamp.toDate()),
-                        style: TextStyle(),
+                    Text(
+                      widget.contentField.description,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
                       ),
-                      SizedBox(width: 3.0),
-                      /*
-                      StreamBuilder(
-                        stream: likesRef
-                            .where('postId', isEqualTo: widget.post.postId)
-                            .snapshots(),
-                        builder:
-                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (snapshot.hasData) {
-                            QuerySnapshot snap = snapshot.data;
-                            List<DocumentSnapshot> docs = snap.docs;
-                            return buildLikesCount(context, docs?.length ?? 0);
-                          } else {
-                            return buildLikesCount(context, 0);
-                          }
-                        },
-                      ),
+                    ),
+                    SizedBox(height: 4.0),
+                    Row(
+                      children: [
+                        Text(
+                          formatter.format(DateTime.parse(widget.contentField.date)).toString(),//timeago.format(widget.post.timestamp.toDate()),
+                          style: TextStyle(),
+                        ),
+                        SizedBox(width: 3.0),
+                        /*
+                        StreamBuilder(
+                          stream: likesRef
+                              .where('postId', isEqualTo: widget.post.postId)
+                              .snapshots(),
+                          builder:
+                              (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.hasData) {
+                              QuerySnapshot snap = snapshot.data;
+                              List<DocumentSnapshot> docs = snap.docs;
+                              return buildLikesCount(context, docs?.length ?? 0);
+                            } else {
+                              return buildLikesCount(context, 0);
+                            }
+                          },
+                        ),
 
-                       */
-                    ],
-                  ),
-                ],
-              ),
-              Spacer(),
-              //buildLikeButton(),
-            ],
+                         */
+                      ],
+                    ),
+                  ],
+                ),
+                Spacer(),
+                //buildLikeButton(),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

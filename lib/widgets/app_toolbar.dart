@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../authentication_service.dart';
+import '../network/authentication_service.dart';
 
 class AppToolbar extends StatelessWidget {
   final String sectionName;

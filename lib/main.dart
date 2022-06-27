@@ -8,7 +8,7 @@ import 'package:germanenapp/screens/login_page.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 
-import 'authentication_service.dart';
+import 'network/authentication_service.dart';
 import 'screens/home_page.dart';
 
 Future<void> main() async {

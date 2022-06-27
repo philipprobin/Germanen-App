@@ -7,7 +7,7 @@ import 'package:germanenapp/network/Database.dart';
 import 'package:germanenapp/widgets/submit_button.dart';
 import 'package:provider/src/provider.dart';
 
-import '../authentication_service.dart';
+import '../network/authentication_service.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
