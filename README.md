@@ -1,4 +1,5 @@
 # germanenapp
+![Lines of code](https://img.shields.io/tokei/lines/github/philipprobin/Germanen-App)
 
 A new Flutter application.
 
