@@ -70,7 +70,7 @@ class AuthenticationWrapper extends StatelessWidget {
       firebaseUser.reload();
       return HomePage();
     }
-    return SignInPage();
+    return LoginPage();
   }
 }
 

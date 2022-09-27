@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:germanenapp/network/Database.dart';
 import 'package:germanenapp/screens/content_item_list.dart';
@@ -28,7 +27,7 @@ class _CommentsState extends State<Comments> {
   TextEditingController commentsTEC = TextEditingController();
 
   currentUserId() {
-    return FirebaseAuth.instance.currentUser?.displayName;;
+    return FirebaseAuth.instance.currentUser?.displayName;
   }
 
   final DateFormat formatter = DateFormat('dd.MM.yyyy');
@@ -117,7 +116,7 @@ class _CommentsState extends State<Comments> {
                           padding: const EdgeInsets.only(right: 10.0),
                           child: Icon(
                             Icons.send,
-                            color: Theme.of(context).accentColor,
+                            color: Theme.of(context).colorScheme.secondary,
                           ),
                         ),
                       ),
@@ -183,7 +182,7 @@ class _CommentsState extends State<Comments> {
                     Row(
                       children: [
                         Text(
-                          formatter.format(DateTime.parse(widget.contentField.date)).toString(),//timeago.format(widget.post.timestamp.toDate()),
+                          formatter.format(DateTime.parse(widget.contentField.date)).toString(),
                           style: TextStyle(),
                         ),
                         SizedBox(width: 3.0),

@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:81895078809:android:94ac20059ba7ec5ad4f108",
         "android_client_info": {
-          "package_name": "com.example.germanenapp"
+          "package_name": "de.turnerschaft.germania.germanenapp"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "81895078809-4v9k4ckj1uod7c0l1ft1gk3kd02ve49i.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.germanenapp",
+            "package_name": "de.turnerschaft.germania.germanenapp",
             "certificate_hash": "b0eee52fb15e830a8e13d92e79eb028e0225c796"
           }
         },

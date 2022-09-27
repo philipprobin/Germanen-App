@@ -15,6 +15,7 @@ final FirebaseStorage storage = FirebaseStorage.instance;
 final CollectionReference _mainCollection = _firestore.collection('posts');
 final CollectionReference _usersCollection = _firestore.collection('users');
 final CollectionReference _beerCollection = _firestore.collection('beers');
+final CollectionReference _semproCollection = _firestore.collection('sempros');
 final CollectionReference _commentsCollection =
     _firestore.collection('comments');
 
@@ -162,6 +163,10 @@ class Database {
 
   static Stream<QuerySnapshot> readItems() {
     return _mainCollection.orderBy('date').snapshots();
+  }
+
+  static Future<QuerySnapshot<Object?>> readSempros() {
+    return _semproCollection.get();
   }
 
   static Stream<QuerySnapshot> readBeers() {

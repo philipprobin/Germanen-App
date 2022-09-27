@@ -1,18 +1,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:germanenapp/screens/sign_up_page.dart';
-import 'package:germanenapp/widgets/Widgets.dart';
 import 'package:germanenapp/widgets/submit_button.dart';
 import 'package:provider/src/provider.dart';
 
 import 'package:germanenapp/network/Database.dart';
 import '../network/authentication_service.dart';
 
-class SignInPage extends StatelessWidget {
+class LoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  Widgets widgets = Widgets();
 
 
   @override

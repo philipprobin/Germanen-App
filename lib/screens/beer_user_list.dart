@@ -109,12 +109,13 @@ class _BeerListEntry extends StatelessWidget {
                         Icons.receipt_long,
                         color: Theme.of(context).primaryColor,
                         size: 24.0,
-
                       ),
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => ProtocolListPage(userId: userId,),
+                            builder: (context) => ProtocolListPage(
+                              userId: userId,
+                            ),
                           ),
                         );
                       },
@@ -170,10 +171,11 @@ class _BeerListEntry extends StatelessWidget {
                     //beer
                     userId != database.getDisplayName()
                         ? IconButton(
-                            onPressed: (){},
+                            onPressed: () {},
                             icon: Icon(
                               Icons.sports_bar,
-                              color: Colors.grey, //Theme.of(context).primaryColor,
+                              color:
+                                  Colors.grey, //Theme.of(context).primaryColor,
                               size: 24.0,
                             ),
                           )

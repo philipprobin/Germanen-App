@@ -1,11 +1,9 @@
-import 'package:carousel_slider/carousel_slider.dart';
+
 import 'package:expandable_page_view/expandable_page_view.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:germanenapp/components/GalleryPhotoWrapper.dart';
 import 'package:germanenapp/components/GalleryThumbnail.dart';
 import 'package:germanenapp/models/galleryItemModel.dart';
-import 'package:germanenapp/widgets/widget_size.dart';
 
 class GalleryPhotoZoomableView extends StatefulWidget {
   final List<dynamic> images;
@@ -76,7 +74,7 @@ class _GalleryPhotoZoomableViewState extends State<GalleryPhotoZoomableView> {
   }
 
   void _open(BuildContext context, final int index) {
-    //cast stringlist to GalleryItemModelList
+    //cast string list to GalleryItemModelList
     List<GalleryItemModel> galleries = [];
     itemList.map((element) {
       galleries.add(GalleryItemModel(id: element));

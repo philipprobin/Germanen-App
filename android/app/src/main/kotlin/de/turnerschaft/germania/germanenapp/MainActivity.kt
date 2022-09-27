@@ -1,4 +1,4 @@
-package com.example.germanenapp
+package de.turnerschaft.germania.germanenapp
 
 import io.flutter.embedding.android.FlutterActivity
 

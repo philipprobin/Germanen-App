@@ -30,14 +30,17 @@ dependencies:
   hexcolor: ^2.0.6
   image_picker: ^0.8.5+3
 
-  syncfusion_flutter_pdfviewer: ^19.4.56-beta
-  flutter_pdfview: ^1.2.2
+  change_app_package_name: ^1.1.0
+  dio: ^4.0.6
+  image_gallery_saver: ^1.7.1
   path_provider: ^2.0.9
   file_picker: ^4.0.3
   open_file:
-  permission_handler: ^9.0.1
+  permission_handler: ^10.0.0
   carousel_slider: ^4.0.0-nullsafety.0
   like_button: ^2.0.4
+  internet_file: ^1.2.0
+  native_pdf_renderer: ^5.0.0+1
 
   expandable_page_view: ^1.0.14
   camera:
