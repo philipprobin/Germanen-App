@@ -1,4 +1,3 @@
-
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:germanenapp/components/GalleryPhotoWrapper.dart';
@@ -29,27 +28,28 @@ class _GalleryPhotoZoomableViewState extends State<GalleryPhotoZoomableView> {
     return Container(
       child: Column(
         children: <Widget>[
-          Container(
-            width: MediaQuery.of(context).size.width,
-            child: ExpandablePageView.builder(
-              physics: BouncingScrollPhysics(),
-              onPageChanged: (index) {
-                setState(() {
-                  current = index;
-                });
-              },
-              itemCount: itemList.length,
-              itemBuilder: (context, index) {
-
-                return GalleryItemThumbnail(
-                  galleryItemModel: GalleryItemModel(id: itemList[index]),
-                  onTap: () {
-                    _open(context, index);
-                  },
-                );
-              },
-            ),
-          ),
+          itemList.length == 0
+              ? Container()
+              : Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: ExpandablePageView.builder(
+                    physics: BouncingScrollPhysics(),
+                    onPageChanged: (index) {
+                      setState(() {
+                        current = index;
+                      });
+                    },
+                    itemCount: itemList.length,
+                    itemBuilder: (context, index) {
+                      return GalleryItemThumbnail(
+                        galleryItemModel: GalleryItemModel(id: itemList[index]),
+                        onTap: () {
+                          _open(context, index);
+                        },
+                      );
+                    },
+                  ),
+                ),
           itemList.length == 1
               ? Container()
               : Row(

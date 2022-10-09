@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 
+import '../main.dart';
+
 class SemproItem extends StatefulWidget {
   final String fileName;
   final String size;
@@ -46,7 +48,7 @@ class _SemproItemWidgetState extends State<SemproItem> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
+        color: buildMaterialColor(Color(0xFFF12A2A)),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: Colors.black),
       ),

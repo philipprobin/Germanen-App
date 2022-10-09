@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:germanenapp/screens/beer_user_list.dart';
-import '../widgets/app_toolbar.dart';
+import '../../widgets/app_toolbar.dart';
+import 'beer_user_list.dart';
 
 class BeerListPage extends StatefulWidget {
   const BeerListPage({Key? key}) : super(key: key);

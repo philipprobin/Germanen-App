@@ -3,7 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:germanenapp/network/Database.dart';
-import 'package:germanenapp/screens/protocol_page.dart';
+import 'package:germanenapp/screens/users/protocol_page.dart';
+import 'package:germanenapp/screens/users/user_profile_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UserList extends StatelessWidget {
@@ -36,6 +37,11 @@ class UserList extends StatelessWidget {
                 Map<String, dynamic> data =
                     snapshot.data!.docs[index].data() as Map<String, dynamic>;
                 var beers = data['beers'];
+                var image = "";
+                try {
+                  image = data["image"];
+                } catch (e) {}
+                ;
                 var sum = 0;
                 for (var entry in beers) {
                   if (entry['amount'] != null) {
@@ -83,13 +89,23 @@ class _BeerListEntry extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(
-                  width: 70,
-                  child: Text(
-                    userId,
-                    style: TextStyle(
-                      fontSize: 14,
-                      //color: Color(0x80121212),
+                InkWell(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => UserProfilePage(userId))),
+                  child: Container(
+                    child: SizedBox(
+                      width: 90,
+                      child: Text(
+                        userId,
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          //color: Color(0x80121212),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -136,7 +152,7 @@ class _BeerListEntry extends StatelessWidget {
                     //pay
 
                     //other user
-                    userId != database.getDisplayName()
+                    userId != Database.getDisplayName()
                         ? IconButton(
                             icon: Icon(
                               Icons.euro_rounded,
@@ -169,7 +185,7 @@ class _BeerListEntry extends StatelessWidget {
                       endIndent: 10, //Spacing at the bottom of divider.
                     ),
                     //beer
-                    userId != database.getDisplayName()
+                    userId != Database.getDisplayName()
                         ? IconButton(
                             onPressed: () {},
                             icon: Icon(
@@ -241,7 +257,7 @@ class _BeerListEntry extends StatelessWidget {
                     onFieldSubmitted: (value) {
                       if (_formKey.currentState != null &&
                           _formKey.currentState!.validate()) {
-                        debugPrint('beer $value');
+                        debugPrint('users $value');
                         database.submitBeerAmount(value);
                         Database.updateTotalBeerAmount(userId, 'beers');
                         Navigator.of(context).pop();

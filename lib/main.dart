@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:germanenapp/screens/login_page.dart';
+import 'package:germanenapp/screens/register/login_page.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 
@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
         )
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Germanen-App',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: buildMaterialColor(Color(0xFFDA2A2A)),

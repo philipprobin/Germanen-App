@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:germanenapp/screens/comment.dart';
 import 'package:like_button/like_button.dart';
 
 import '../network/Database.dart';

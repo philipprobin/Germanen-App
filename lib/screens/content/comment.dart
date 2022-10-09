@@ -2,13 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:germanenapp/network/Database.dart';
-import 'package:germanenapp/screens/content_item_list.dart';
+import 'package:germanenapp/screens/content/content_item_list.dart';
 
 import 'package:intl/intl.dart';
-import '../components/stream_comments_wrapper.dart';
-import '../models/comment_model.dart';
-import '../widgets/app_toolbar.dart';
-import '../widgets/like_button_widget.dart';
+import '../../components/stream_comments_wrapper.dart';
+import '../../models/comment_model.dart';
+import '../../widgets/app_toolbar.dart';
+import '../../widgets/like_button_widget.dart';
 import 'gallery_photo_zoomable_view.dart';
 class Comments extends StatefulWidget {
   final ContentField contentField;

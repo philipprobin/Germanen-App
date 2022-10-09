@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
-import '../network/Database.dart';
-import '../widgets/app_toolbar.dart';
+import '../../network/Database.dart';
+import '../../widgets/app_toolbar.dart';
 
 class ProtocolListPage extends StatefulWidget {
   final String userId;

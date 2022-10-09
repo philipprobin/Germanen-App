@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:germanenapp/screens/sempro_page.dart';
+import 'package:germanenapp/screens/sempro/sempro_page.dart';
 
-import 'beer_page.dart';
-import 'content_page.dart';
+
+import 'users/beer_page.dart';
+import 'content/content_page.dart';
 
 class HomePage extends StatefulWidget {
   @override

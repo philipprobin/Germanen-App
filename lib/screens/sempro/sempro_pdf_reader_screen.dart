@@ -2,17 +2,17 @@
 import 'package:flutter/material.dart';
 import 'package:native_pdf_renderer/native_pdf_renderer.dart';
 
-import '../widgets/app_toolbar.dart';
+import '../../widgets/app_toolbar.dart';
 
-class ReaderScreen extends StatefulWidget {
-  const ReaderScreen(this.controller, {Key? key}) : super(key: key);
+class SemproPdfReaderScreen extends StatefulWidget {
+  const SemproPdfReaderScreen(this.controller, {Key? key}) : super(key: key);
   final PdfControllerPinch controller;
 
   @override
-  State<ReaderScreen> createState() => _ReaderScreenState();
+  State<SemproPdfReaderScreen> createState() => _SemproPdfReaderScreenState();
 }
 
-class _ReaderScreenState extends State<ReaderScreen> {
+class _SemproPdfReaderScreenState extends State<SemproPdfReaderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

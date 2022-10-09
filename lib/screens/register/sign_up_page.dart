@@ -4,10 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:germanenapp/network/Database.dart';
+import 'package:germanenapp/screens/register/create_profile_screen.dart';
 import 'package:germanenapp/widgets/submit_button.dart';
+import 'package:germanenapp/widgets/text_field_widget.dart';
 import 'package:provider/src/provider.dart';
 
-import '../network/authentication_service.dart';
+import '../../network/authentication_service.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -61,49 +63,55 @@ class _SignUpState extends State<SignUpPage> {
                           fit: BoxFit.contain,
                         )),
                     const SizedBox(height: 10),
-                    _TextField(
+                    TextFieldWidget(
                       label: 'Vorname',
                       controller: _firstNameController,
                       icon: Icon(Icons.account_circle),
                       validator: _userIdValidator,
                       inputAction: TextInputAction.next,
+                      isPasswordField: false,
                     ),
                     const SizedBox(height: 10),
-                    _TextField(
+                    TextFieldWidget(
                       label: 'Nachname',
                       controller: _secondNameController,
                       icon: Icon(Icons.account_circle),
                       validator: _userIdValidator,
                       inputAction: TextInputAction.next,
+                      isPasswordField: false,
                     ),
                     const SizedBox(height: 10),
-                    _TextField(
+                    TextFieldWidget(
                       label: 'Email',
                       controller: _emailController,
                       icon: Icon(Icons.mail),
                       validator: _requiredValidator,
                       inputAction: TextInputAction.next,
+                      isPasswordField: false,
                     ),
                     const SizedBox(height: 10),
-                    _TextField(
+                    TextFieldWidget(
                       label: 'Passwort',
                       controller: _passwordController,
                       icon: Icon(Icons.vpn_key),
                       validator: _requiredValidator,
-                      password: true,
+                      isPasswordField: true,
                       inputAction: TextInputAction.next,
                     ),
                     const SizedBox(height: 10),
-                    _TextField(
+                    TextFieldWidget(
                       label: 'Bestätige Passwort',
                       controller: _confirmController,
                       icon: Icon(Icons.vpn_key),
                       validator: _confirmPasswordValidator,
-                      password: true,
+                      isPasswordField: true,
                       inputAction: TextInputAction.done,
                     ),
                     if (loading) ...[
-                      const Center(child: CircularProgressIndicator()),
+                      const Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                          child: CircularProgressIndicator(),
+                      ),
                     ],
                     if (!loading) ...[
                       SubmitButton(
@@ -206,7 +214,12 @@ class _SignUpState extends State<SignUpPage> {
           );
 
       //fragment pops
-      Navigator.of(context).pop();
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  CreateProfileScreen(null, FirebaseAuth.instance.currentUser!.displayName!)));
+      //Navigator.of(context).pop();
     } on FirebaseAuthException catch (e) {
       log('createUserWithEmail exception log');
       debugPrint('createUserWithEmail exception debug');
@@ -218,43 +231,4 @@ class _SignUpState extends State<SignUpPage> {
   }
 
 
-}
-
-class _TextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String label;
-  final bool password;
-  final Icon icon;
-  final TextInputType? keyboardType;
-  final TextInputAction inputAction;
-  final FormFieldValidator<String>? validator;
-
-  const _TextField({
-    required this.label,
-    required this.controller,
-    required this.icon,
-    required this.inputAction,
-    this.validator,
-    this.password = false,
-    this.keyboardType,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          prefixIcon: icon,
-          labelText: label,
-          border: const OutlineInputBorder(),
-        ),
-        keyboardType: keyboardType,
-        obscureText: password,
-        validator: validator,
-        textInputAction: inputAction,
-      ),
-    );
-  }
 }

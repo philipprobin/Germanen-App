@@ -28,7 +28,7 @@ class Database {
     userId = displayName;
   }
 
-  String? getDisplayName() {
+  static String? getDisplayName() {
     return FirebaseAuth.instance.currentUser?.displayName;
   }
 
@@ -41,16 +41,17 @@ class Database {
 
   //uploadFile
   static Future<String> uploadImageFile(
+    String folder,
     String filePath,
     String fileName,
   ) async {
     File file = File(filePath);
 
     try {
-      UploadTask uploadTask = storage.ref('images/$fileName').putFile(file);
+      UploadTask uploadTask = storage.ref('$folder/$fileName').putFile(file);
       return await (await uploadTask)
           .storage
-          .ref('images/$fileName')
+          .ref('$folder/$fileName')
           .getDownloadURL();
     } on firebase_core.FirebaseException catch (e) {
       debugPrint('ERROR ${e}');
@@ -58,13 +59,22 @@ class Database {
     }
   }
 
-  static Future<void> _addPathToDatabase(
+  //adds url of image in storage in the right doc
+  static Future<void> _addPathToDatabase(String displayName, String folder,
       String url, DocumentReference<Object?>? doc) async {
     try {
-      if (doc != null) {
+      //path is set to Users collection
+      if (folder == "profile_pictures" && doc != null) {
+        //upload to users collection
+        await doc
+            .update({"image": url})
+            .whenComplete(() => print("Bilder hochgeladen"))
+            .catchError((e) => print(e));
+      } else if (doc != null) {
+        //if not any profile picture its a post
         await doc
             .update({
-              'images': FieldValue.arrayUnion([url])
+              folder: FieldValue.arrayUnion([url])
             })
             .whenComplete(() => print("Bilder hochgeladen"))
             .catchError((e) => print(e));
@@ -120,25 +130,35 @@ class Database {
         .whenComplete(() => print("übergeben an Firebase"));
 
     //save to right folder
-    if (files.isNotEmpty) {
-      files.forEach((file) async {
-        //get last proper filepath
-        var splitList = file.path.split('/');
-        //safe Url List to db
-        _addPathToDatabase(
-            await uploadImageFile(
-                file.path, '${doc.id}/${splitList[splitList.length - 1]}'),
-            doc);
-        debugPrint(
-            'filepath ${file.path} file ${splitList[splitList.length - 1]}');
-      });
-    }
+    uploadFilesSetPaths("", "images", doc, files);
 
     //set docId
     var snapshot = await _mainCollection.where('date', isEqualTo: date).get();
     debugPrint('snapshot: ${snapshot.docs}');
     for (var doc in snapshot.docs) {
       doc.reference.update({'docId': doc.id});
+    }
+  }
+
+  static Future<void> uploadFilesSetPaths(String displayName, String folder,
+      DocumentReference<Object?> doc, List<File> files)  async {
+    if (files.isNotEmpty) {
+      files.forEach((file) async {
+        //get last proper filepath
+        var splitList = file.path.split('/');
+        //safe Url List to db
+        _addPathToDatabase(
+            displayName,
+            folder,
+            await uploadImageFile(folder, file.path,
+                '${doc.id}/${splitList[splitList.length - 1]}'),
+            doc);
+        debugPrint(
+            'filepath ${file.path} file ${splitList[splitList.length - 1]}');
+      });
+    } else {
+      //if list is empty delete: image = ""
+      _addPathToDatabase(displayName, folder, "", doc);
     }
   }
 
@@ -173,6 +193,9 @@ class Database {
     return _beerCollection.orderBy('totalBeers').snapshots();
   }
 
+  static Future<DocumentSnapshot> readUser(String? userId) {
+    return _usersCollection.doc(userId).get();
+  }
 
   static Stream<QuerySnapshot> readComments(
     String postId,
@@ -187,9 +210,9 @@ class Database {
     return _beerCollection.doc(userId).snapshots();
   }
 
-  //create set and get beer amount
+  //create set and get users amount
   static void updateTotalBeerAmount(String userId, String beerType) async {
-    //beer type beer, paidBeer
+    //users type users, paidBeer
     DocumentReference<Object?>? documentReference =
         await _beerCollection.doc(userId);
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:germanenapp/widgets/like_button_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:germanenapp/network/Database.dart';
-import 'package:like_button/like_button.dart';
+
 import 'comment.dart';
 import 'gallery_photo_zoomable_view.dart';
 
@@ -103,7 +103,7 @@ class ContentField extends StatelessWidget {
   Widget build(BuildContext context) {
     final DateFormat formatter = DateFormat('dd.MM.yyyy');
 
-    var displayName = database.getDisplayName();
+    var displayName = Database.getDisplayName();
     return Container(
       decoration: BoxDecoration(
         color: Color(0xFFDDDDDD),
@@ -122,7 +122,7 @@ class ContentField extends StatelessWidget {
                     color: Color(0x80121212),
                   ),
                 ),
-                database.getDisplayName() != userId
+                Database.getDisplayName() != userId
                     ? Container()
                     : PopupMenuButton(
                         itemBuilder: (BuildContext context) {
@@ -245,7 +245,7 @@ class ContentField extends StatelessWidget {
   }
 
   actionPopUpItemSelected(String value, String userId, String postId) {
-    if (value == 'delete' && userId == database.getDisplayName()) {
+    if (value == 'delete' && userId == Database.getDisplayName()) {
       database.deleteItem(postId: postId);
     }
   }

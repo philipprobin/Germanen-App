@@ -2,14 +2,14 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:germanenapp/screens/reader_screen.dart';
+import 'package:germanenapp/screens/sempro/sempro_pdf_reader_screen.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../network/Database.dart';
-import '../widgets/app_toolbar.dart';
-import '../widgets/sempro_item.dart';
+import '../../network/Database.dart';
+import '../../widgets/app_toolbar.dart';
+import '../../widgets/sempro_item.dart';
 
 class SemproPage extends StatefulWidget {
   const SemproPage({Key? key}) : super(key: key);
@@ -268,7 +268,7 @@ class _SemproPageState extends State<SemproPage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              ReaderScreen(pdfController)));
+                                              SemproPdfReaderScreen(pdfController)));
                                   /*
                                   FutureBuilder<PdfPageImage>(
                                       future: openPDF(sempro),

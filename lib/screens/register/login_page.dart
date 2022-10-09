@@ -1,17 +1,16 @@
-
 import 'package:flutter/material.dart';
-import 'package:germanenapp/screens/sign_up_page.dart';
+import 'package:germanenapp/screens/register/sign_up_page.dart';
 import 'package:germanenapp/widgets/submit_button.dart';
+import 'package:germanenapp/widgets/text_field_widget.dart';
 import 'package:provider/src/provider.dart';
 
 import 'package:germanenapp/network/Database.dart';
-import '../network/authentication_service.dart';
+import '../../network/authentication_service.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-
 
   @override
   Widget build(BuildContext context) {
@@ -36,29 +35,31 @@ class LoginPage extends StatelessWidget {
                           fit: BoxFit.contain,
                         )),
                     const SizedBox(height: 15),
-
-                    _TextField(
+                    TextFieldWidget(
                       label: 'Email',
                       controller: emailController,
                       icon: Icon(Icons.mail),
                       inputAction: TextInputAction.next,
+                      isPasswordField: false,
                     ),
-
                     const SizedBox(height: 15),
-                    _TextField(
+                    TextFieldWidget(
                       controller: passwordController,
+                      isPasswordField: true,
                       label: "Passwort",
                       icon: Icon(Icons.vpn_key),
                       inputAction: TextInputAction.done,
                     ),
                     SubmitButton(
                       onPressed: () async {
-                        String? responds = await context.read<AuthenticationService>().signIn(
-                          email: emailController.text.trim(),
-                          password: passwordController.text.trim(),
-                        );
-                        if(responds!= 'Signed in'){
-                          Database.handleSignUpError('Anmeldung', responds!, context);
+                        String? responds =
+                            await context.read<AuthenticationService>().signIn(
+                                  email: emailController.text.trim(),
+                                  password: passwordController.text.trim(),
+                                );
+                        if (responds != 'Signed in') {
+                          Database.handleSignUpError(
+                              'Anmeldung', responds!, context);
                         }
                       },
                       text: 'Anmelden',
@@ -73,8 +74,7 @@ class LoginPage extends StatelessWidget {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          SignUpPage()));
+                                      builder: (context) => SignUpPage()));
                             },
                             child: Text(
                               "Registrieren",
@@ -95,44 +95,5 @@ class LoginPage extends StatelessWidget {
     );
   }
 }
-class _TextField extends StatelessWidget {
 
-  final TextEditingController controller;
-  final String label;
-  final bool password;
-  final Icon icon;
-  final TextInputType? keyboardType;
-  final FormFieldValidator<String>? validator;
-  final TextInputAction inputAction;
 
-  const _TextField({
-    required this.label,
-    required this.controller,
-    required this.icon,
-    required this.inputAction,
-    this.validator,
-    this.password = false,
-    this.keyboardType,
-
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-      child: TextFormField(
-        autofocus: false,
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: icon,
-          border: const OutlineInputBorder(),
-        ),
-        keyboardType: keyboardType,
-        obscureText: password,
-        validator: validator,
-        textInputAction: inputAction,
-      ),
-    );
-  }
-}

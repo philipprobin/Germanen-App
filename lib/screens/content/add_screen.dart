@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:germanenapp/screens/add_item_form.dart';
+import 'package:germanenapp/screens/content/add_item_form.dart';
 import 'package:germanenapp/widgets/app_toolbar.dart';
 
 class AddScreen extends StatelessWidget{
