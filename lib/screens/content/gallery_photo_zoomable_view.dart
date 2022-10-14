@@ -30,26 +30,30 @@ class _GalleryPhotoZoomableViewState extends State<GalleryPhotoZoomableView> {
         children: <Widget>[
           itemList.length == 0
               ? Container()
-              : Container(
-                  width: MediaQuery.of(context).size.width,
-                  child: ExpandablePageView.builder(
-                    physics: BouncingScrollPhysics(),
-                    onPageChanged: (index) {
-                      setState(() {
-                        current = index;
-                      });
-                    },
-                    itemCount: itemList.length,
-                    itemBuilder: (context, index) {
-                      return GalleryItemThumbnail(
-                        galleryItemModel: GalleryItemModel(id: itemList[index]),
-                        onTap: () {
-                          _open(context, index);
+              //posts without images are added with ""
+              : itemList[0] == ""
+                  ? Container()
+                  : Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: ExpandablePageView.builder(
+                        physics: BouncingScrollPhysics(),
+                        onPageChanged: (index) {
+                          setState(() {
+                            current = index;
+                          });
                         },
-                      );
-                    },
-                  ),
-                ),
+                        itemCount: itemList.length,
+                        itemBuilder: (context, index) {
+                          return GalleryItemThumbnail(
+                            galleryItemModel:
+                                GalleryItemModel(id: itemList[index]),
+                            onTap: () {
+                              _open(context, index);
+                            },
+                          );
+                        },
+                      ),
+                    ),
           itemList.length == 1
               ? Container()
               : Row(
@@ -94,29 +98,3 @@ class _GalleryPhotoZoomableViewState extends State<GalleryPhotoZoomableView> {
     );
   }
 }
-
-/*
-CarouselSlider(
-          items: galleries
-              .map(
-                (item) => Container(
-                  padding: EdgeInsets.all(2),
-                  color: Colors.grey[800],
-                  child: GalleryItemThumbnail(
-                    galleryItemModel: item,
-                    onTap: () {
-                      _open(context, 0);
-                    },
-                  ),
-                ),
-              )
-              .toList(),
-          options: CarouselOptions(
-              viewportFraction: 1.0,
-              onPageChanged: (index, reason) {
-                setState(() {
-                  current = index;
-                });
-              }),
-        ),
- */

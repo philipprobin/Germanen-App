@@ -1,14 +1,10 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 final FirebaseStorage storage = FirebaseStorage.instance;
@@ -24,7 +20,7 @@ class Database {
   static String? userId;
   static bool exist = false;
 
-  String? setUsernameFromDisplayName(String? displayName) {
+  void setUsernameFromDisplayName(String? displayName) {
     userId = displayName;
   }
 
@@ -106,7 +102,6 @@ class Database {
 
   //add item
   Future<void> addItem({
-    required String title,
     required String description,
     required List<File> files,
   }) async {
@@ -115,7 +110,6 @@ class Database {
     debugPrint('date $date');
 
     Map<String, dynamic> data = <String, dynamic>{
-      "title": title,
       "description": description,
       "date": '$date',
       "userId": getDisplayName(),
@@ -141,7 +135,7 @@ class Database {
   }
 
   static Future<void> uploadFilesSetPaths(String displayName, String folder,
-      DocumentReference<Object?> doc, List<File> files)  async {
+      DocumentReference<Object?> doc, List<File> files) async {
     if (files.isNotEmpty) {
       files.forEach((file) async {
         //get last proper filepath
@@ -163,7 +157,6 @@ class Database {
   }
 
   static Future<void> updateItem({
-    required String title,
     required String description,
     required String docId,
   }) async {
@@ -171,7 +164,6 @@ class Database {
         _mainCollection.doc(userId).collection('items').doc(docId);
 
     Map<String, dynamic> data = <String, dynamic>{
-      "title": title,
       "description": description,
     };
 
@@ -324,7 +316,6 @@ class Database {
     }).catchError((e) => print(e));
   }
 
-  //todo fix
   Future<void> payBeers() async {
     String date = DateTime.now().toString();
 
@@ -372,6 +363,18 @@ class Database {
     }
     Database.updateTotalBeerAmount(getDisplayName()!, 'beers');
     Database.updateTotalBeerAmount(getDisplayName()!, 'paidBeers');
+  }
+
+  static Future<bool> isInternetConnected() async {
+    try {
+      final result = await InternetAddress.lookup('example.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+    } on SocketException catch (_) {
+      return false;
+    }
+    return false;
   }
 
   static void handleSignUpError(String type, String e, BuildContext context) {

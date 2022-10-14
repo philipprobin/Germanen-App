@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:germanenapp/screens/content/add_content_page.dart';
 import '../../widgets/app_toolbar.dart';
-import 'add_screen.dart';
 import 'content_item_list.dart';
 
 class ContentPage extends StatefulWidget {
@@ -24,7 +24,7 @@ class _ContentPageState extends State<ContentPage> {
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => AddScreen(),
+              builder: (context) => AddContentPage(),
             ),
           );
         },

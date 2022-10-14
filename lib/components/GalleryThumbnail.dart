@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:germanenapp/models/galleryItemModel.dart';
 
 class GalleryItemThumbnail extends StatelessWidget {
@@ -18,6 +19,21 @@ class GalleryItemThumbnail extends StatelessWidget {
           child: Image.network(
             galleryItemModel.id,
             fit: BoxFit.cover,
+            loadingBuilder: (BuildContext context, Widget child,
+                ImageChunkEvent? loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 128.0),
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                ),
+              );
+            },
           ),//Image.asset(galleryItemModel.id, fit: BoxFit.fill,),
         ),
       ),

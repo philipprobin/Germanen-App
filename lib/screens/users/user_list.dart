@@ -17,7 +17,11 @@ class UserList extends StatelessWidget {
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: CircularProgressIndicator(),
+              child: Padding(
+                padding: EdgeInsets.only(
+                    top: (MediaQuery.of(context).size.height / 2) - 100),
+                child: CircularProgressIndicator(),
+              ),
             );
           }
           if (snapshot.hasError) {

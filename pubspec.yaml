@@ -30,6 +30,8 @@ dependencies:
   hexcolor: ^2.0.6
   image_picker: ^0.8.5+3
 
+  fluttertoast: ^8.0.9
+  double_back_to_close_app: ^2.1.0
   change_app_package_name: ^1.1.0
   dio: ^4.0.6
   image_gallery_saver: ^1.7.1

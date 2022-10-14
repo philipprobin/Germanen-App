@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:germanenapp/screens/register/sign_up_page.dart';
 import 'package:germanenapp/widgets/submit_button.dart';
 import 'package:germanenapp/widgets/text_field_widget.dart';
@@ -38,6 +39,7 @@ class LoginPage extends StatelessWidget {
                     TextFieldWidget(
                       label: 'Email',
                       controller: emailController,
+                      validator: _emailValidator,
                       icon: Icon(Icons.mail),
                       inputAction: TextInputAction.next,
                       isPasswordField: false,
@@ -45,6 +47,7 @@ class LoginPage extends StatelessWidget {
                     const SizedBox(height: 15),
                     TextFieldWidget(
                       controller: passwordController,
+                      validator: _passwordValidator,
                       isPasswordField: true,
                       label: "Passwort",
                       icon: Icon(Icons.vpn_key),
@@ -52,14 +55,27 @@ class LoginPage extends StatelessWidget {
                     ),
                     SubmitButton(
                       onPressed: () async {
-                        String? responds =
-                            await context.read<AuthenticationService>().signIn(
-                                  email: emailController.text.trim(),
-                                  password: passwordController.text.trim(),
-                                );
-                        if (responds != 'Signed in') {
-                          Database.handleSignUpError(
-                              'Anmeldung', responds!, context);
+                        if (_formKey.currentState != null &&
+                            _formKey.currentState!.validate()) {
+                          String? responds = await context
+                              .read<AuthenticationService>()
+                              .signIn(
+                                email: emailController.text.trim(),
+                                password: passwordController.text.trim(),
+                              );
+                          debugPrint("nach signIn()");
+                          if (!await Database.isInternetConnected()) {
+                            Fluttertoast.showToast(
+                                msg: "Keine Internet Verbindung");
+                          } else if (responds == 'Email nicht vorhanden') {
+                            debugPrint("email toast");
+                            Fluttertoast.showToast(msg: responds);
+                          } else if (responds ==
+                              'Falsches Passwort zu dieser Email') {
+                            Fluttertoast.showToast(msg: responds);
+                          } else {
+                            CircularProgressIndicator();
+                          }
                         }
                       },
                       text: 'Anmelden',
@@ -94,6 +110,18 @@ class LoginPage extends StatelessWidget {
       ),
     );
   }
+
+  String? _emailValidator(String? text) {
+    if (text == null || text.trim().isEmpty) {
+      return 'Bitte gib deine Email ein.';
+    }
+    return null;
+  }
+
+  String? _passwordValidator(String? confirmPasswordText) {
+    if (confirmPasswordText == null || confirmPasswordText.trim().isEmpty) {
+      return 'Bitte gib dein Passwort ein.';
+    }
+    return null;
+  }
 }
-
-

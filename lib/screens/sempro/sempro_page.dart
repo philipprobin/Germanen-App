@@ -269,55 +269,6 @@ class _SemproPageState extends State<SemproPage> {
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               SemproPdfReaderScreen(pdfController)));
-                                  /*
-                                  FutureBuilder<PdfPageImage>(
-                                      future: openPDF(sempro),
-                                      builder: (context, AsyncSnapshot snapshot) {
-                                        if (snapshot.hasData) {
-                                          debugPrint("hasData");
-                                          return snapshot.data;
-                                        } else {
-                                          debugPrint("hasNoData");
-                                          return CircularProgressIndicator();
-                                        }
-                                      });
-
-                                  final pdfController = PdfController(
-                                    document: PdfDocument.openAsset('assets/sample.pdf'),
-                                  );
-                                  PdfView(
-                                    controller: pdfController,
-                                  );
-                                  PdfPageImage pdfPageImage = await openPDF(sempro);
-                                  PdfView(
-                                    controller: pdfController,
-                                  );
-                                  Center(
-                                    child: FutureBuilder<PdfPageImage>(
-                                        future: openPDF(sempro),
-                                        builder:
-                                            (context, AsyncSnapshot snapshot) {
-                                          if (snapshot.hasData) {
-                                            debugPrint("hasData");
-                                            return snapshot.data;
-                                          } else {
-                                            debugPrint("hasNoData");
-                                            return CircularProgressIndicator();
-                                          }
-                                        }),
-                                  );
-                                  openPDF(
-                                      File(sempro.path + "/${sempro.fileName}"));
-                                  debugPrint("try to delete: ${sempro.isDownloaded}");
-                                  //delete File on second Click
-                                  File file = File(
-                                    "${sempro.path}/${sempro.fileName}",
-                                  );
-                                  await sempro.deleteFile(file);
-                                  checkFileExists(sempro, file);
-
-                                   */
-
                                 }
                                 debugPrint("tapped");
                               },

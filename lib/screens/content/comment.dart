@@ -3,13 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:germanenapp/network/Database.dart';
 import 'package:germanenapp/screens/content/content_item_list.dart';
-
 import 'package:intl/intl.dart';
 import '../../components/stream_comments_wrapper.dart';
 import '../../models/comment_model.dart';
 import '../../widgets/app_toolbar.dart';
 import '../../widgets/like_button_widget.dart';
 import 'gallery_photo_zoomable_view.dart';
+
 class Comments extends StatefulWidget {
   final ContentField contentField;
 
@@ -82,14 +82,8 @@ class _CommentsState extends State<Comments> {
                           contentPadding: EdgeInsets.all(10.0),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0),
-                            borderSide: BorderSide(
-                              color: Colors.yellow,//Theme.of(context).primaryColor,
-                            ),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.pink,//Theme.of(context).primaryColor,
-                            ),
                             borderRadius: BorderRadius.circular(5.0),
                           ),
                           hintText: "Schreibe einen Kommentar...",
@@ -138,21 +132,6 @@ class _CommentsState extends State<Comments> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  widget.contentField.title,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ],
-            ),
-          ),
           Container(
             width: MediaQuery.of(context).size.width - 20.0,
             child: GalleryPhotoZoomableView(
@@ -186,24 +165,6 @@ class _CommentsState extends State<Comments> {
                           style: TextStyle(),
                         ),
                         SizedBox(width: 3.0),
-                        /*
-                        StreamBuilder(
-                          stream: likesRef
-                              .where('postId', isEqualTo: widget.post.postId)
-                              .snapshots(),
-                          builder:
-                              (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                            if (snapshot.hasData) {
-                              QuerySnapshot snap = snapshot.data;
-                              List<DocumentSnapshot> docs = snap.docs;
-                              return buildLikesCount(context, docs?.length ?? 0);
-                            } else {
-                              return buildLikesCount(context, 0);
-                            }
-                          },
-                        ),
-
-                         */
                       ],
                     ),
                   ],
@@ -255,98 +216,4 @@ class _CommentsState extends State<Comments> {
       },
     );
   }
-
-  /*
-  buildLikeButton() {
-    return StreamBuilder(
-      stream: likesRef
-          .where('postId', isEqualTo: widget.post.postId)
-          .where('userId', isEqualTo: currentUserId())
-          .snapshots(),
-      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasData) {
-          List<QueryDocumentSnapshot> docs = snapshot?.data?.docs ?? [];
-          return IconButton(
-            onPressed: () {
-              if (docs.isEmpty) {
-                likesRef.add({
-                  'userId': currentUserId(),
-                  'postId': widget.post.postId,
-                  'dateCreated': Timestamp.now(),
-                });
-                addLikesToNotification();
-              } else {
-                likesRef.doc(docs[0].id).delete();
-
-                removeLikeFromNotification();
-              }
-            },
-            icon: docs.isEmpty
-                ? Icon(
-              CupertinoIcons.heart,
-            )
-                : Icon(
-              CupertinoIcons.heart_fill,
-              color: Colors.red,
-            ),
-          );
-        }
-        return Container();
-      },
-    );
-  }
-
-  buildLikesCount(BuildContext context, int count) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 7.0),
-      child: Text(
-        '$count likes',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 10.0,
-        ),
-      ),
-    );
-  }
-
-  addLikesToNotification() async {
-    bool isNotMe = currentUserId() != widget.post.ownerId;
-
-    if (isNotMe) {
-      DocumentSnapshot doc = await usersRef.doc(currentUserId()).get();
-      user = UserModel.fromJson(doc.data());
-      notificationRef
-          .doc(widget.post.ownerId)
-          .collection('notifications')
-          .doc(widget.post.postId)
-          .set({
-        "type": "like",
-        "username": user.username,
-        "userId": currentUserId(),
-        "userDp": user.photoUrl,
-        "postId": widget.post.postId,
-        "mediaUrl": widget.post.mediaUrl,
-        "timestamp": timestamp,
-      });
-    }
-  }
-
-  removeLikeFromNotification() async {
-    bool isNotMe = currentUserId() != widget.post.ownerId;
-
-    if (isNotMe) {
-      DocumentSnapshot doc = await usersRef.doc(currentUserId()).get();
-      user = UserModel.fromJson(doc.data());
-      notificationRef
-          .doc(widget.post.ownerId)
-          .collection('notifications')
-          .doc(widget.post.postId)
-          .get()
-          .then((doc) => {
-        if (doc.exists) {doc.reference.delete()}
-      });
-    }
-  }
-
-   */
 }

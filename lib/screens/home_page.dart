@@ -1,6 +1,6 @@
+import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:germanenapp/screens/sempro/sempro_page.dart';
-
 
 import 'users/beer_page.dart';
 import 'content/content_page.dart';
@@ -16,15 +16,16 @@ class _HomePageState extends State<HomePage> {
     SemproPage(),
     ContentPage(),
     BeerListPage(),
-
   ];
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      body: DoubleBackToCloseApp(
         child: _widgetOptions[currentIndex],
+        snackBar: const SnackBar(
+          content: Text('Zum beenden nochmal Tippen'),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
@@ -51,4 +52,5 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
 }

@@ -24,7 +24,7 @@ class AuthenticationService {
   /// This is to make it as easy as possible but a better way would be to
   /// use your own custom class that would take the exception and return better
   /// error messages. That way you can throw, return or whatever you prefer with that instead.
-  Future<String?> signIn({required String email, required String password}) async {
+  Future<String> signIn({required String email, required String password}) async {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
 
@@ -32,6 +32,13 @@ class AuthenticationService {
       debugPrint('auth debug: ${_firebaseAuth.currentUser?.displayName}');
       return "Signed in";
     } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found' || e.code == 'invalid-email') {
+        debugPrint("user-not-found");
+        return 'Email nicht vorhanden';
+      }
+      if (e.code == 'wrong-password') {
+        return 'Falsches Passwort zu dieser Email';
+      }
       return e.code;
     }
   }

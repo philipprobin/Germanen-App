@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:germanenapp/widgets/like_button_widget.dart';
@@ -38,7 +39,6 @@ class ItemList extends StatelessWidget {
                 itemBuilder: (context, index) {
                   Map<String, dynamic> data =
                       snapshot.data!.docs[index].data() as Map<String, dynamic>;
-                  String title = data['title'];
                   String description = data['description'];
                   String userId = data['userId'];
                   String date = data['date'];
@@ -47,14 +47,12 @@ class ItemList extends StatelessWidget {
                   List<dynamic> likes =
                       data['likes']; //getLikes(data['likes']);
                   return ContentField(
-                    userId: userId,
-                    title: title,
-                    description: description,
-                    date: date,
-                    images: images,
-                    likes: likes,
-                    docId: docId
-                  );
+                      userId: userId,
+                      description: description,
+                      date: date,
+                      images: images,
+                      likes: likes,
+                      docId: docId);
                 },
                 separatorBuilder: (context, index) => SizedBox(
                       height: 16.0,
@@ -64,23 +62,10 @@ class ItemList extends StatelessWidget {
           return Center(child: Text("Keine Daten"));
         });
   }
-/*
-
-  Object getLikes(Map<String,dynamic>? data) {
-    if(data == null){
-      return [];
-    }
-    else{
-      return data;
-    }
-  }
-
-   */
 }
 
 class ContentField extends StatelessWidget {
   final String userId;
-  final String title;
   final String description;
   final String date;
   final String docId;
@@ -89,7 +74,6 @@ class ContentField extends StatelessWidget {
 
   ContentField({
     required this.userId,
-    required this.title,
     required this.description,
     required this.date,
     required this.images,
@@ -119,40 +103,34 @@ class ContentField extends StatelessWidget {
                   userId,
                   style: TextStyle(
                     fontSize: 12,
+                    fontWeight: FontWeight.bold,
                     color: Color(0x80121212),
                   ),
                 ),
                 Database.getDisplayName() != userId
                     ? Container()
-                    : PopupMenuButton(
-                        itemBuilder: (BuildContext context) {
-                          return [
-                            PopupMenuItem(
-                              value: 'delete',
-                              child: Text('löschen'),
-                            )
-                          ];
-                        },
-                        onSelected: (String value) =>
-                            actionPopUpItemSelected(value, userId, docId),
-                      ),
+                    : Container(
+                  height: 16,
+                      child: PopupMenuButton(
+
+                          itemBuilder: (BuildContext context) {
+                            return [
+                              PopupMenuItem(
+                                value: 'delete',
+                                child: Text('löschen'),
+                              )
+                            ];
+                          },
+                          onSelected: (String value) =>
+                              actionPopUpItemSelected(value, userId, docId),
+                        ),
+                    ),
               ]),
               Padding(
-                padding: const EdgeInsets.all(0),
+                padding: const EdgeInsets.all(8),
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        title,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
                       Text(
                         description,
                         style: TextStyle(
@@ -169,32 +147,6 @@ class ContentField extends StatelessWidget {
                                 images: images,
                               ),
                             ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      /*
-                      Container(
-                        padding: EdgeInsets.symmetric(vertical: 2.0),
-                        height: 100,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: images.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Container(
-                              padding: EdgeInsets.all(2),
-                              color: Colors.grey[800],
-                              child: Center(
-                                child: Image.network(images[index]),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-
-                       */
                     ]),
               ),
               Row(
@@ -217,13 +169,11 @@ class ContentField extends StatelessWidget {
                           builder: (context) => Comments(
                             contentField: ContentField(
                               userId: userId,
-                              title: title,
                               description: description,
                               date: date,
                               images: images,
                               likes: likes,
                               docId: docId,
-
                             ),
                           ),
                         ),
@@ -250,76 +200,3 @@ class ContentField extends StatelessWidget {
     }
   }
 }
-
-/*
-
-Container(
-                        padding: EdgeInsets.symmetric(vertical: 2.0),
-                        height: 100,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: images.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Container(
-                              padding: EdgeInsets.all(2),
-                              color: Colors.grey[800],
-                              child: Center(
-                                child: Image.network(images[index]),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-
-
-      return ListView.separated(
-                physics: NeverScrollableScrollPhysics(),
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  Map< String, dynamic > data = snapshot.data!.docs[index].data();
-                  String title = data['title'];
-                  String description = data['description'];
-                  return _ContentField(
-                    userId: "docID",
-                    title: title,
-                    subtitle: description,
-                    date: "12.08.1997",
-                  );
-                },
-
-                separatorBuilder: (context, index) =>
-                    SizedBox(height: 16.0,),
-                itemCount:  snapshot.data!.docs.length//snapshot.docs.length,snapshot.data.lenght
-            );
-
-
-
-Ink(
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: ListTile(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          onTap: () {},
-                          leading: Text(
-                            docID,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          title: Text(
-                            title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          subtitle: Text(
-                            description,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      );
- */

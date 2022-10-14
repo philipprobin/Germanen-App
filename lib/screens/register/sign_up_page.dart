@@ -25,7 +25,7 @@ class _SignUpState extends State<SignUpPage> {
   final _secondNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   var loading = false;
 
@@ -85,7 +85,7 @@ class _SignUpState extends State<SignUpPage> {
                       label: 'Email',
                       controller: _emailController,
                       icon: Icon(Icons.mail),
-                      validator: _requiredValidator,
+                      validator: _emailValidator,
                       inputAction: TextInputAction.next,
                       isPasswordField: false,
                     ),
@@ -94,14 +94,14 @@ class _SignUpState extends State<SignUpPage> {
                       label: 'Passwort',
                       controller: _passwordController,
                       icon: Icon(Icons.vpn_key),
-                      validator: _requiredValidator,
+                      validator: _passwordValidator,
                       isPasswordField: true,
                       inputAction: TextInputAction.next,
                     ),
                     const SizedBox(height: 10),
                     TextFieldWidget(
                       label: 'Bestätige Passwort',
-                      controller: _confirmController,
+                      controller: _confirmPasswordController,
                       icon: Icon(Icons.vpn_key),
                       validator: _confirmPasswordValidator,
                       isPasswordField: true,
@@ -135,9 +135,9 @@ class _SignUpState extends State<SignUpPage> {
     );
   }
 
-  String? _requiredValidator(String? text) {
+  String? _emailValidator(String? text) {
     if (text == null || text.trim().isEmpty) {
-      return 'Bitte gib etwas ein.';
+      return 'Bitte gib deine Email ein.';
     }
     if (text == 'email-already-in-use') {
       return 'Email wird schon verwendet';
@@ -162,9 +162,17 @@ class _SignUpState extends State<SignUpPage> {
     return null;
   }
 
+  String? _passwordValidator(String? confirmPasswordText) {
+    if (confirmPasswordText == null || confirmPasswordText.trim().isEmpty) {
+      return 'Bitte gib dein Passwort ein.';
+    }
+    return null;
+  }
+
+
   String? _confirmPasswordValidator(String? confirmPasswordText) {
     if (confirmPasswordText == null || confirmPasswordText.trim().isEmpty) {
-      return 'Bitte gib einen Benutzernamen ein.';
+      return 'Bitte gib dein Passwort ein.';
     }
     if (_passwordController.text != confirmPasswordText) {
       return 'Passwörter stimmen nicht überein';
