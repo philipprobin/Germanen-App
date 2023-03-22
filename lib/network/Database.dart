@@ -19,6 +19,35 @@ class Database {
   static int? itemCount = -1;
   static String? userId;
   static bool exist = false;
+  static final  int shift = 5;
+
+   String encrypt(String plaintext) {
+    String ciphertext = '';
+    for (int i = 0; i < plaintext.length; i++) {
+      int charCode = plaintext.codeUnitAt(i);
+      if (charCode >= 65 && charCode <= 90) { // uppercase letters
+        charCode = ((charCode - 65 + shift) % 26) + 65;
+      } else if (charCode >= 97 && charCode <= 122) { // lowercase letters
+        charCode = ((charCode - 97 + shift) % 26) + 97;
+      }
+      ciphertext += String.fromCharCode(charCode);
+    }
+    return ciphertext;
+  }
+
+  static String decrypt(String ciphertext) {
+    String plaintext = '';
+    for (int i = 0; i < ciphertext.length; i++) {
+      int charCode = ciphertext.codeUnitAt(i);
+      if (charCode >= 65 && charCode <= 90) { // uppercase letters
+        charCode = ((charCode - 65 - shift + 26) % 26) + 65;
+      } else if (charCode >= 97 && charCode <= 122) { // lowercase letters
+        charCode = ((charCode - 97 - shift + 26) % 26) + 97;
+      }
+      plaintext += String.fromCharCode(charCode);
+    }
+    return plaintext;
+  }
 
   void setUsernameFromDisplayName(String? displayName) {
     userId = displayName;
@@ -110,7 +139,7 @@ class Database {
     debugPrint('date $date');
 
     Map<String, dynamic> data = <String, dynamic>{
-      "description": description,
+      "description": encrypt(description),
       "date": '$date',
       "userId": getDisplayName(),
       "images": [],
@@ -301,7 +330,7 @@ class Database {
     return url;
   }
 
-  Future<void> submitBeerAmount(String value) async {
+  Future<void> submitBeerAmount(String value, String userId) async {
     String date = DateTime.now().toString();
     Map<String, dynamic> data = <String, dynamic>{
       "amount": int.parse(value),
@@ -309,18 +338,18 @@ class Database {
     };
 
     DocumentReference<Object?>? doc =
-        await _beerCollection.doc('${getDisplayName()}');
+        await _beerCollection.doc('${userId}');
 
     await doc.update({
       'beers': FieldValue.arrayUnion([data])
     }).catchError((e) => print(e));
   }
 
-  Future<void> payBeers() async {
+  Future<void> payBeers(String userId) async {
     String date = DateTime.now().toString();
 
     DocumentSnapshot<Object?>? doc =
-        await _beerCollection.doc('${getDisplayName()}').get();
+        await _beerCollection.doc(userId).get();
 
     if (doc.exists) {
       Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
@@ -334,7 +363,7 @@ class Database {
       }
 
       DocumentReference<Object?>? documentReference =
-          await _beerCollection.doc('${getDisplayName()}');
+          await _beerCollection.doc(userId);
 
       //transfer to paidArray
       await documentReference
@@ -361,8 +390,8 @@ class Database {
           .whenComplete(() => print("paydate"))
           .catchError((e) => print(e));
     }
-    Database.updateTotalBeerAmount(getDisplayName()!, 'beers');
-    Database.updateTotalBeerAmount(getDisplayName()!, 'paidBeers');
+    Database.updateTotalBeerAmount(userId, 'beers');
+    Database.updateTotalBeerAmount(userId, 'paidBeers');
   }
 
   static Future<bool> isInternetConnected() async {

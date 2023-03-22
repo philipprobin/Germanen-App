@@ -48,7 +48,7 @@ class ItemList extends StatelessWidget {
                       data['likes']; //getLikes(data['likes']);
                   return ContentField(
                       userId: userId,
-                      description: description,
+                      description: Database.decrypt(description),
                       date: date,
                       images: images,
                       likes: likes,
