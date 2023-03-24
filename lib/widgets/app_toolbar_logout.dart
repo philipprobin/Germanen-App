@@ -3,10 +3,10 @@ import 'package:provider/provider.dart';
 
 import '../network/authentication_service.dart';
 
-class AppToolbar extends StatelessWidget {
+class AppToolbarLogout extends StatelessWidget {
   final String sectionName;
 
-  const AppToolbar({
+  const AppToolbarLogout({
     Key? key,
     required this.sectionName,
   }) : super(key: key);
@@ -28,6 +28,11 @@ class AppToolbar extends StatelessWidget {
             height: 50,
           ),
           //if(ModalRoute.of(context)!.settings.name == "/home")
+          IconButton(
+            onPressed: () => {context.read<AuthenticationService>().signOut()},
+            color: Colors.white,
+            icon: Icon(Icons.logout),
+          ),
         ],
       ),
     );

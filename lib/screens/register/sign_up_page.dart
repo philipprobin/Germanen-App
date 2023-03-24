@@ -191,8 +191,8 @@ class _SignUpState extends State<SignUpPage> {
     });
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
       );
       //create beerList entry
       await FirebaseFirestore.instance
@@ -213,7 +213,7 @@ class _SignUpState extends State<SignUpPage> {
           .doc(
               '${_firstNameController.text.trim()} ${_secondNameController.text.trim()}')
           .set({
-        'email': _emailController.text,
+        'email': Database.encrypt(_emailController.text.trim()),
       });
       //sign in
       context.read<AuthenticationService>().signIn(

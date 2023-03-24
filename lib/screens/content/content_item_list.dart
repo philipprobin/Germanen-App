@@ -39,16 +39,16 @@ class ItemList extends StatelessWidget {
                 itemBuilder: (context, index) {
                   Map<String, dynamic> data =
                       snapshot.data!.docs[index].data() as Map<String, dynamic>;
-                  String description = data['description'];
-                  String userId = data['userId'];
-                  String date = data['date'];
+                  String description = Database.decrypt(data['description']);
+                  String userId = Database.decrypt(data['userId']);
+                  String date = Database.decrypt(data['date']);
                   List images = data['images'];
                   String docId = data['docId'];
                   List<dynamic> likes =
                       data['likes']; //getLikes(data['likes']);
                   return ContentField(
                       userId: userId,
-                      description: Database.decrypt(description),
+                      description: description,
                       date: date,
                       images: images,
                       likes: likes,
@@ -109,22 +109,28 @@ class ContentField extends StatelessWidget {
                 ),
                 Database.getDisplayName() != userId
                     ? Container()
-                    : Container(
-                  height: 16,
-                      child: PopupMenuButton(
-
-                          itemBuilder: (BuildContext context) {
-                            return [
-                              PopupMenuItem(
-                                value: 'delete',
-                                child: Text('löschen'),
-                              )
-                            ];
-                          },
-                          onSelected: (String value) =>
-                              actionPopUpItemSelected(value, userId, docId),
+                    : GestureDetector(
+                        onTap: () {
+                          // Handle button click here
+                        },
+                        child: Container(
+                          height: 40,
+                          // Increase button height to make it easier to click
+                          child: PopupMenuButton(
+                            itemBuilder: (BuildContext context) {
+                              return [
+                                PopupMenuItem(
+                                  value: 'delete',
+                                  child: Text('löschen'),
+                                )
+                              ];
+                            },
+                            onSelected: (String value) =>
+                                actionPopUpItemSelected(value, userId, docId),
+                          ),
                         ),
-                    ),
+                        behavior: HitTestBehavior.opaque,
+                      )
               ]),
               Padding(
                 padding: const EdgeInsets.all(8),

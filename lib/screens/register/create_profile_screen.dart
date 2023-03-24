@@ -511,12 +511,12 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
       }
       //update user entry
       await document.update({
-        'hobbys': _hobbys,
-        'status': _status,
-        'activeSince': _activeSince,
-        'mayor': _mayorController.text.trim(),
-        'job': _jobController.text.trim(),
-        'location': _locationController.text.trim(),
+        'hobbys': (_hobbys),
+        'status': Database.encrypt(_status),
+        'activeSince': Database.encrypt(_activeSince),
+        'mayor': Database.encrypt(_mayorController.text.trim()),
+        'job': Database.encrypt(_jobController.text.trim()),
+        'location': Database.encrypt(_locationController.text.trim()),
       });
 
       //upload profile pic

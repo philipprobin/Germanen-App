@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../network/Database.dart';
+
 class CommentModel {
   String postId;
   String comment;
@@ -16,9 +18,9 @@ class CommentModel {
   static CommentModel fromJson(Map<String, dynamic> json) {
     final CommentModel model = new CommentModel(
         postId: json['postId'],
-        comment: json['comment'],
-        timestamp: json['timestamp'],
-        userId: json['userId']);
+        comment: Database.decrypt(json['comment']),
+        timestamp: Database.decrypt(json['timestamp']),
+        userId: Database.decrypt(json['userId']));
     return model;
   }
 

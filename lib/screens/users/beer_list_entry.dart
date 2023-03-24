@@ -1,12 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:germanenapp/network/Database.dart';
-import 'package:germanenapp/screens/dialog/payment_dialog.dart';
 import 'package:germanenapp/screens/users/protocol_page.dart';
 import 'package:germanenapp/screens/users/user_profile_page.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class BeerListEntry extends StatelessWidget {
   final String userId;
@@ -92,17 +87,4 @@ class BeerListEntry extends StatelessWidget {
     );
   }
 
-
-  String? _confirmBeerAmount(String? number) {
-    try {
-      var test = int.parse(number!);
-      if (test < 1) {
-        return 'Phritte';
-      }
-    } catch (e) {
-      debugPrint('${e}');
-      return 'Zahl!';
-    }
-    return null;
-  }
 }

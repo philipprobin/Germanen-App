@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
@@ -19,34 +21,27 @@ class Database {
   static int? itemCount = -1;
   static String? userId;
   static bool exist = false;
-  static final  int shift = 5;
+  static final int shift = 5;
 
-   String encrypt(String plaintext) {
-    String ciphertext = '';
-    for (int i = 0; i < plaintext.length; i++) {
-      int charCode = plaintext.codeUnitAt(i);
-      if (charCode >= 65 && charCode <= 90) { // uppercase letters
-        charCode = ((charCode - 65 + shift) % 26) + 65;
-      } else if (charCode >= 97 && charCode <= 122) { // lowercase letters
-        charCode = ((charCode - 97 + shift) % 26) + 97;
-      }
-      ciphertext += String.fromCharCode(charCode);
+
+  static String encrypt(String plainText) {
+    String cipherText = "";
+    for (int i = 0; i < plainText.length; i++) {
+      int charCode = plainText.codeUnitAt(i);
+      charCode = (charCode + shift) % 65536; // 65536 is the number of Unicode characters
+      cipherText += String.fromCharCode(charCode);
     }
-    return ciphertext;
+    return cipherText;
   }
 
-  static String decrypt(String ciphertext) {
-    String plaintext = '';
-    for (int i = 0; i < ciphertext.length; i++) {
-      int charCode = ciphertext.codeUnitAt(i);
-      if (charCode >= 65 && charCode <= 90) { // uppercase letters
-        charCode = ((charCode - 65 - shift + 26) % 26) + 65;
-      } else if (charCode >= 97 && charCode <= 122) { // lowercase letters
-        charCode = ((charCode - 97 - shift + 26) % 26) + 97;
-      }
-      plaintext += String.fromCharCode(charCode);
+  static String decrypt(String cipherText) {
+    String plainText = "";
+    for (int i = 0; i < cipherText.length; i++) {
+      int charCode = cipherText.codeUnitAt(i);
+      charCode = (charCode - shift + 65536) % 65536; // 65536 is the number of Unicode characters
+      plainText += String.fromCharCode(charCode);
     }
-    return plaintext;
+    return plainText;
   }
 
   void setUsernameFromDisplayName(String? displayName) {
@@ -140,8 +135,8 @@ class Database {
 
     Map<String, dynamic> data = <String, dynamic>{
       "description": encrypt(description),
-      "date": '$date',
-      "userId": getDisplayName(),
+      "date": encrypt('$date'),
+      "userId": encrypt(getDisplayName()!),
       "images": [],
       "likes": [],
       "docId": ""
@@ -156,7 +151,7 @@ class Database {
     uploadFilesSetPaths("", "images", doc, files);
 
     //set docId
-    var snapshot = await _mainCollection.where('date', isEqualTo: date).get();
+    var snapshot = await _mainCollection.where('date', isEqualTo: encrypt(date)).get();
     debugPrint('snapshot: ${snapshot.docs}');
     for (var doc in snapshot.docs) {
       doc.reference.update({'docId': doc.id});
@@ -337,8 +332,7 @@ class Database {
       "date": '$date',
     };
 
-    DocumentReference<Object?>? doc =
-        await _beerCollection.doc('${userId}');
+    DocumentReference<Object?>? doc = await _beerCollection.doc('${userId}');
 
     await doc.update({
       'beers': FieldValue.arrayUnion([data])
@@ -348,8 +342,7 @@ class Database {
   Future<void> payBeers(String userId) async {
     String date = DateTime.now().toString();
 
-    DocumentSnapshot<Object?>? doc =
-        await _beerCollection.doc(userId).get();
+    DocumentSnapshot<Object?>? doc = await _beerCollection.doc(userId).get();
 
     if (doc.exists) {
       Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
@@ -453,9 +446,9 @@ class Database {
     debugPrint('date $date');
 
     Map<String, dynamic> data = <String, dynamic>{
-      "userId": userId,
-      "comment": comment,
-      "timestamp": '$date',
+      "userId": Database.encrypt(userId),
+      "comment": Database.encrypt(comment),
+      "timestamp": Database.encrypt('$date'),
       "postId": postId,
     };
 

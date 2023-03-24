@@ -57,11 +57,11 @@ class UserProfilePage extends StatelessWidget {
                     UserModel userModel = new UserModel(
                         userId: userId,
                         hobbys: data!['hobbys'],
-                        status: data['status'],
-                        activeSince: data['activeSince'],
-                        mayor: data['mayor'],
-                        job: data['job'],
-                        location: data['location'],
+                        status: Database.decrypt(data['status']),
+                        activeSince: Database.decrypt(data['activeSince']),
+                        mayor: Database.decrypt(data['mayor']),
+                        job: Database.decrypt(data['job']),
+                        location: Database.decrypt(data['location']),
                         image: data['image']);
                     debugPrint("UserModel ${userModel.userId}");
 
