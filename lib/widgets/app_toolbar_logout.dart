@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../network/authentication_service.dart';
+import '../screens/register/login_page.dart';
 
 class AppToolbarLogout extends StatelessWidget {
   final String sectionName;
@@ -13,8 +14,6 @@ class AppToolbarLogout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 15),
       alignment: FractionalOffset.center,
@@ -29,7 +28,14 @@ class AppToolbarLogout extends StatelessWidget {
           ),
           //if(ModalRoute.of(context)!.settings.name == "/home")
           IconButton(
-            onPressed: () => {context.read<AuthenticationService>().signOut()},
+            onPressed: () {
+              // Sign out and navigate to LoginPage
+              context.read<AuthenticationService>().signOut();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
+              );
+            },
             color: Colors.white,
             icon: Icon(Icons.logout),
           ),

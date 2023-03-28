@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:germanenapp/screens/home_page.dart';
 import 'package:germanenapp/screens/register/sign_up_page.dart';
 import 'package:germanenapp/widgets/submit_button.dart';
 import 'package:germanenapp/widgets/text_field_widget.dart';
@@ -63,11 +64,18 @@ class LoginPage extends StatelessWidget {
                                 email: emailController.text.trim(),
                                 password: passwordController.text.trim(),
                               );
-                          debugPrint("nach signIn()");
+                          debugPrint("nach signIn() $responds");
                           if (!await Database.isInternetConnected()) {
                             Fluttertoast.showToast(
                                 msg: "Keine Internet Verbindung");
-                          } else if (responds == 'Email nicht vorhanden') {
+                          } else if(responds == "Signed in"){
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => HomePage()),
+                            );
+
+                          }
+                            else if (responds == 'Email nicht vorhanden') {
                             debugPrint("email toast");
                             Fluttertoast.showToast(msg: responds);
                           } else if (responds ==

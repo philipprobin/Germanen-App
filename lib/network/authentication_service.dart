@@ -16,6 +16,7 @@ class AuthenticationService {
   /// Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
   /// after you called this method if you want to pop all routes.
   Future<void> signOut() async {
+    debugPrint("logout");
     await _firebaseAuth.signOut();
   }
 

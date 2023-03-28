@@ -26,7 +26,7 @@ class _AddContentPageState extends State<AddContentPage> {
   bool _isLookingForFiles = false;
 
   String getTitle = "";
-  String getDescription = "";
+  String description = "";
 
   final TextEditingController _descriptionController = TextEditingController();
 
@@ -191,12 +191,13 @@ class _AddContentPageState extends State<AddContentPage> {
 
   String? _requiredDescriptionValidator(String? text) {
     if (files.isNotEmpty) {
+      description = text!;
       return null;
     }
     if (text == null || text.trim().isEmpty) {
       return 'Bitte gib einen Text ein.';
     }
-    getDescription = text;
+    description = text;
     return null;
   }
 
@@ -231,7 +232,8 @@ class _AddContentPageState extends State<AddContentPage> {
       });
 
       //upload image
-      await database.addItem(description: getDescription, files: files);
+      debugPrint("description is $description");
+      await database.addItem(description: description, files: files);
 
       setState(() {
         _isProcessing = false;

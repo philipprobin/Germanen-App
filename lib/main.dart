@@ -1,12 +1,7 @@
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_auth/firebase_auth.dart';
-
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:germanenapp/screens/content/content_page.dart';
-import 'package:germanenapp/screens/register/login_page.dart';
-import 'package:hexcolor/hexcolor.dart';
+import 'package:germanenapp/screens/register/password_page.dart';
 import 'package:provider/provider.dart';
 
 import 'network/authentication_service.dart';
@@ -19,7 +14,7 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  MaterialColor mycolor = MaterialColor(
+  MaterialColor myColor = MaterialColor(
     0xDA2A2A,
     <int, Color>{
       50: Color(0xDA2A2A),
@@ -76,7 +71,8 @@ class AuthenticationWrapper extends StatelessWidget {
       firebaseUser.reload();
       return HomePage();
     }
-    return LoginPage();
+    debugPrint("main");
+    return PasswordPage();
   }
 }
 

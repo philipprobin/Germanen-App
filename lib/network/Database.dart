@@ -14,6 +14,8 @@ final CollectionReference _mainCollection = _firestore.collection('posts');
 final CollectionReference _usersCollection = _firestore.collection('users');
 final CollectionReference _beerCollection = _firestore.collection('beers');
 final CollectionReference _semproCollection = _firestore.collection('sempros');
+
+final CollectionReference _documentsCollection = _firestore.collection('documents');
 final CollectionReference _commentsCollection =
     _firestore.collection('comments');
 
@@ -225,6 +227,11 @@ class Database {
   static Stream<DocumentSnapshot> readUserBeers(String? userId) {
     return _beerCollection.doc(userId).snapshots();
   }
+
+  static Future<DocumentSnapshot> readPassword() {
+    return _documentsCollection.doc("germanen_passwort").get();
+  }
+
 
   //create set and get users amount
   static void updateTotalBeerAmount(String userId, String beerType) async {

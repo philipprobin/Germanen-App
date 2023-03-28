@@ -62,7 +62,7 @@ class UserProfilePage extends StatelessWidget {
                         mayor: Database.decrypt(data['mayor']),
                         job: Database.decrypt(data['job']),
                         location: Database.decrypt(data['location']),
-                        image: data['image']);
+                        image: data["image"]);
                     debugPrint("UserModel ${userModel.userId}");
 
                     return Scaffold(
@@ -120,21 +120,17 @@ class UserProfilePage extends StatelessWidget {
                                                   ),
                                                   child: GestureDetector(
                                                     onTap: () {
-                                                      Navigator.push(context,
-                                                          MaterialPageRoute(
-                                                              builder:
-                                                                  (context) {
-                                                        return ProfilePicturePage(
-                                                            userModel.image !=
-                                                                    ""
-                                                                ? userModel
-                                                                    .image!
-                                                                : Image.asset(
-                                                                    "assets/Germanen-Zirkel.png",
-                                                                    width: 152,
-                                                                    height: 152,
-                                                                  ));
-                                                      }));
+                                                      userModel.image != ""
+                                                          ? Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) {
+                                                              return ProfilePicturePage(
+                                                                  userModel
+                                                                      .image!);
+                                                            }))
+                                                          : Container();
                                                     },
                                                     child: ClipRRect(
                                                       borderRadius:
