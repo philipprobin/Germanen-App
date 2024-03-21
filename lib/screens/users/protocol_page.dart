@@ -2,9 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:intl/intl.dart';
+import '../../helper/value_formatter_helper.dart';
 import '../../network/Database.dart';
-import '../../widgets/app_toolbar.dart';
+
+import '../../widgets/custom_app_bar.dart';
 
 class ProtocolListPage extends StatefulWidget {
   final String userId;
@@ -18,14 +19,9 @@ class ProtocolListPage extends StatefulWidget {
 class _ProtocolListPageState extends State<ProtocolListPage> {
   @override
   Widget build(BuildContext context) {
-    final DateFormat formatter = DateFormat('dd.MM.yyyy');
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-          elevation: 0,
-          title: AppToolbar(
-            sectionName: 'Germanen App',
-          )),
+      appBar: const CustomAppBar(),
       body: Container(
         child: SingleChildScrollView(
           child: Padding(
@@ -109,9 +105,7 @@ class _ProtocolListPageState extends State<ProtocolListPage> {
                                 var beer = beers[index];
                                 var longDate = beer['date'];
                                 var amount = beer['amount'];
-                                String date = formatter
-                                    .format(DateTime.parse(longDate))
-                                    .toString();
+                                String date = ValueFormatterHelper.convertDateToString(longDate);
                                 return Text('$amount Oetti vom $date');
                               },
                               separatorBuilder:
@@ -190,16 +184,12 @@ class _ProtocolListPageState extends State<ProtocolListPage> {
                                     beer['amount'] != null) {
                                   var longDate = beer['date'];
                                   var amount = beer['amount'];
-                                  String date = formatter
-                                      .format(DateTime.parse(longDate))
-                                      .toString();
+                                  String date = ValueFormatterHelper.convertDateToString(longDate);
                                   return Text('$amount Oetti vom $date');
                                 } else {
                                   var longDate = beer['onDate'];
                                   var amount = beer['totalAmountPaid'];
-                                  String date = formatter
-                                      .format(DateTime.parse(longDate))
-                                      .toString();
+                                  String date = ValueFormatterHelper.convertDateToString(longDate);
                                   return Text('$amount Oetti am $date bezahlt');
                                 }
                               },

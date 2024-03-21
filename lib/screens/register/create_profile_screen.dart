@@ -12,7 +12,6 @@ import 'package:germanenapp/screens/users/user_profile_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../../main.dart';
 import '../../widgets/submit_button.dart';
 import '../../widgets/text_field_widget.dart';
 

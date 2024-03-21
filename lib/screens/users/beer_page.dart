@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:germanenapp/screens/dialog/beer_dialog.dart';
 import '../../network/Database.dart';
-import '../../widgets/app_toolbar.dart';
+
+import '../../widgets/custom_app_bar.dart';
 import '../dialog/payment_dialog.dart';
 import 'beer_list_entry.dart';
 import 'couleur_list_entry.dart';
@@ -18,18 +19,12 @@ class _BeerListPageState extends State<BeerListPage> {
   var userId = Database.getDisplayName();
 
   var userBeers = 0;
-  var _couleurBeers = -1;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0,
-        title: AppToolbar(
-          sectionName: 'Germanen App',
-        ),
-      ),
+      appBar: const CustomAppBar(),
       body: Container(
         child: Column(
           children: [
@@ -103,7 +98,6 @@ class _BeerListPageState extends State<BeerListPage> {
                                                 try {
                                                   image = data["image"];
                                                 } catch (e) {}
-                                                ;
                                                 var sum = 0;
                                                 for (var entry in beers) {
                                                   if (entry['amount'] != null) {

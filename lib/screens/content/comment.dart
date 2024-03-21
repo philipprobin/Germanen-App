@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:germanenapp/network/Database.dart';
 import 'package:germanenapp/screens/content/content_item_list.dart';
-import 'package:intl/intl.dart';
 import '../../components/stream_comments_wrapper.dart';
+import '../../helper/value_formatter_helper.dart';
 import '../../models/comment_model.dart';
-import '../../widgets/app_toolbar.dart';
+
+import '../../widgets/custom_app_bar.dart';
 import '../../widgets/like_button_widget.dart';
 import 'gallery_photo_zoomable_view.dart';
 
@@ -31,17 +31,11 @@ class _CommentsState extends State<Comments> {
     return Database.getDisplayName();
   }
 
-  final DateFormat formatter = DateFormat('dd.MM.yyyy');
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-          elevation: 0,
-          title: AppToolbar(
-            sectionName: 'Germanen-App',
-          )),
+      appBar: const CustomAppBar(),
       body: Container(
         height: MediaQuery.of(context).size.height,
         child: Column(
@@ -53,7 +47,7 @@ class _CommentsState extends State<Comments> {
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: buildFullPost(),
                   ),
-                  Divider(thickness: 1.5),
+                  const Divider(thickness: 1.5),
                   buildComments()
                 ],
               ),
@@ -71,16 +65,16 @@ class _CommentsState extends State<Comments> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     ListTile(
-                      contentPadding: EdgeInsets.all(8),
+                      contentPadding: const EdgeInsets.all(8),
                       title: TextField(
                         textCapitalization: TextCapitalization.sentences,
                         controller: commentsTEC,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 15.0,
                           color: Colors.black,
                         ),
                         decoration: InputDecoration(
-                          contentPadding: EdgeInsets.all(10.0),
+                          contentPadding: const EdgeInsets.all(10.0),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0),
                           ),
@@ -142,7 +136,6 @@ class _CommentsState extends State<Comments> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 Text(
                   widget.contentField.description,
                   softWrap: true,
@@ -155,7 +148,6 @@ class _CommentsState extends State<Comments> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-
                     Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: LikeButtonWidget(
@@ -164,15 +156,11 @@ class _CommentsState extends State<Comments> {
                         postId: widget.contentField.docId,
                       ),
                     ),
-
-                    SizedBox(width: 3.0),
+                    const SizedBox(width: 3.0),
                     Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: Text(
-                        formatter
-                            .format(DateTime.parse(widget.contentField.date))
-                            .toString(),
-                        style: TextStyle(),
+                          ValueFormatterHelper.convertDateToString(widget.contentField.date),
                       ),
                     ),
                   ],
@@ -199,14 +187,15 @@ class _CommentsState extends State<Comments> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             ListTile(
-              contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 20.0),
               title: Text(
                 comments.userId,
                 style: TextStyle(fontWeight: FontWeight.w700),
               ),
               subtitle: Text(
-                formatter.format(DateTime.parse(comments.timestamp)).toString(),
-                style: TextStyle(fontSize: 12.0),
+
+                ValueFormatterHelper.convertDateToString(comments.timestamp),
+                style: const TextStyle(fontSize: 12.0),
               ),
             ),
             Padding(

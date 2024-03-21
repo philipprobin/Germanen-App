@@ -2,6 +2,7 @@ import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:germanenapp/screens/sempro/sempro_page.dart';
 
+import '../utils/app_color.dart';
 import 'users/beer_page.dart';
 import 'content/content_page.dart';
 
@@ -28,6 +29,8 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: AppColor.primary,
+        selectedItemColor: AppColor.secondary,
         currentIndex: currentIndex,
         showUnselectedLabels: true,
         onTap: (index) => setState(() => currentIndex = index),

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:germanenapp/network/Database.dart';
-// @dart=2.9
+
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth;
   final Database database = Database();

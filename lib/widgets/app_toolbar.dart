@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../network/authentication_service.dart';
 
 class AppToolbar extends StatelessWidget {
   final String sectionName;
@@ -18,7 +15,7 @@ class AppToolbar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 15),
       alignment: FractionalOffset.center,
-      child: new Row(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

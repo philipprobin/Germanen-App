@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:image_downloader/image_downloader.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
@@ -45,20 +43,6 @@ class _GalleryPhotoWrapper extends State<GalleryPhotoWrapper> {
     setState(() {
       currentIndex = index;
     });
-  }
-  void _downloadImage() async {
-    try {
-      String url = widget.galleries[currentIndex];
-
-      debugPrint(url);
-      var imageId = await ImageDownloader.downloadImage(url);
-      if (imageId == null) {
-        return;
-      }
-      var path = await ImageDownloader.findPath(imageId);
-    } on Exception catch (error) {
-      debugPrint(error.toString());
-    }
   }
 
   @override

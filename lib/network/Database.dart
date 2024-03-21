@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
@@ -237,7 +235,7 @@ class Database {
   static void updateTotalBeerAmount(String userId, String beerType) async {
     //users type users, paidBeer
     DocumentReference<Object?>? documentReference =
-        await _beerCollection.doc(userId);
+        _beerCollection.doc(userId);
 
     DocumentSnapshot<Object?>? documentSnapshot =
         await _beerCollection.doc(userId).get();
@@ -363,7 +361,7 @@ class Database {
       }
 
       DocumentReference<Object?>? documentReference =
-          await _beerCollection.doc(userId);
+          _beerCollection.doc(userId);
 
       //transfer to paidArray
       await documentReference

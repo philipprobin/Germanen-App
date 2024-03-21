@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../network/Database.dart';
 
@@ -56,7 +55,7 @@ class BeerDialog extends StatelessWidget {
                       _formKey.currentState!.validate()) {
                     debugPrint('users $value');
                     database.submitBeerAmount(value, userId);
-                    Database.updateTotalBeerAmount(userId!, 'beers');
+                    Database.updateTotalBeerAmount(userId, 'beers');
                     Navigator.of(context).pop();
                   }
                 },

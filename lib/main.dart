@@ -2,31 +2,37 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:germanenapp/screens/register/password_page.dart';
+import 'package:germanenapp/utils/app_color.dart';
 import 'package:provider/provider.dart';
 
+import 'firebase_options.dart';
 import 'network/authentication_service.dart';
 import 'screens/home_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+
+    options: DefaultFirebaseOptions.currentPlatform,
+
+  );
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MaterialColor myColor = MaterialColor(
+  MaterialColor myColor = const MaterialColor(
     0xDA2A2A,
     <int, Color>{
-      50: Color(0xDA2A2A),
-      100: Color(0xDA2A2A),
-      200: Color(0xDA2A2A),
-      300: Color(0xDA2A2A),
-      400: Color(0xDA2A2A),
-      500: Color(0xDA2A2A),
-      600: Color(0xDA2A2A),
-      700: Color(0xDA2A2A),
-      800: Color(0xDA2A2A),
-      900: Color(0xDA2A2A),
+      50: Color(0xFFDA2A2A),
+      100: Color(0xFFDA2A2A),
+      200: Color(0xFFDA2A2A),
+      300: Color(0xFFDA2A2A),
+      400: Color(0xFFDA2A2A),
+      500: Color(0xFFDA2A2A),
+      600: Color(0xFFDA2A2A),
+      700: Color(0xFFDA2A2A),
+      800: Color(0xFFDA2A2A),
+      900: Color(0xFFDA2A2A),
     },
   );
 
@@ -47,9 +53,19 @@ class MyApp extends StatelessWidget {
         title: 'Germanen-App',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primarySwatch: buildMaterialColor(Color(0xFFDA2A2A)),
-          backgroundColor: Colors.white,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
+          primarySwatch: MaterialColor(AppColor.primary.value, <int, Color>{
+            50: AppColor.primary,
+            100: AppColor.primary,
+            200: AppColor.primary,
+            300: AppColor.primary,
+            400: AppColor.primary,
+            500: AppColor.primary,
+            600: AppColor.primary,
+            700: AppColor.primary,
+            800: AppColor.primary,
+            900: AppColor.primary,
+          }),
+          primaryColor: AppColor.primary
         ),
         home: AuthenticationWrapper(),
         routes: {

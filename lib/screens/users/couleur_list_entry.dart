@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:germanenapp/network/Database.dart';
 import 'package:germanenapp/screens/users/protocol_page.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class CouleurListEntry extends StatelessWidget {
   final String userId;

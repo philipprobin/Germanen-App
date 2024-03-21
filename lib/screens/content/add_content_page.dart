@@ -6,12 +6,14 @@ import 'package:germanenapp/screens/content/take_photo.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../main.dart';
-import '../../widgets/app_toolbar.dart';
-//import 'package:open_file/open_file.dart';
+
+import '../../widgets/custom_app_bar.dart';
 
 List<CameraDescription>? cameras;
 
 class AddContentPage extends StatefulWidget {
+  const AddContentPage({super.key});
+
   @override
   _AddContentPageState createState() => _AddContentPageState();
 }
@@ -55,10 +57,7 @@ class _AddContentPageState extends State<AddContentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: AppToolbar(
-        sectionName: 'Germanen-App',
-      )),
+      appBar: const CustomAppBar(),
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: Center(

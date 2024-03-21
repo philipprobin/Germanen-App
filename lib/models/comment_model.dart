@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../network/Database.dart';
 
@@ -16,7 +15,7 @@ class CommentModel {
   });
 
   static CommentModel fromJson(Map<String, dynamic> json) {
-    final CommentModel model = new CommentModel(
+    final CommentModel model = CommentModel(
         postId: json['postId'],
         comment: Database.decrypt(json['comment']),
         timestamp: Database.decrypt(json['timestamp']),
@@ -26,10 +25,10 @@ class CommentModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['postId'] = this.postId;
-    data['comment'] = this.comment;
-    data['timestamp'] = this.timestamp;
-    data['userId'] = this.userId;
+    data['postId'] = postId;
+    data['comment'] = comment;
+    data['timestamp'] = timestamp;
+    data['userId'] = userId;
     return data;
   }
 }

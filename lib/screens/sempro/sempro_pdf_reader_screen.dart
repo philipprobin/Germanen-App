@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:native_pdf_renderer/native_pdf_renderer.dart';
+import 'package:pdfx/pdfx.dart';
 
-import '../../widgets/app_toolbar.dart';
+import '../../widgets/custom_app_bar.dart';
 
 class SemproPdfReaderScreen extends StatefulWidget {
   const SemproPdfReaderScreen(this.controller, {Key? key}) : super(key: key);
@@ -17,12 +17,7 @@ class _SemproPdfReaderScreenState extends State<SemproPdfReaderScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0,
-        title: AppToolbar(
-          sectionName: 'Germanen-App',
-        ),
-      ),
+      appBar: const CustomAppBar(),
       body: Container(
         child: PdfViewPinch(
           controller: widget.controller,

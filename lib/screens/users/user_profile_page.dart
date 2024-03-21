@@ -4,9 +4,10 @@ import 'package:germanenapp/models/user_model.dart';
 import 'package:germanenapp/network/Database.dart';
 import 'package:germanenapp/screens/register/create_profile_screen.dart';
 import 'package:germanenapp/screens/users/profile_picture_page.dart';
+import 'package:germanenapp/widgets/custom_app_bar.dart';
 
 import '../../main.dart';
-import '../../widgets/app_toolbar.dart';
+
 
 class UserProfilePage extends StatelessWidget {
   const UserProfilePage(this.userId, {Key? key}) : super(key: key);
@@ -23,26 +24,21 @@ class UserProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          title: AppToolbar(
-            sectionName: 'Germanen-App',
-          ),
-        ),
+        appBar: const CustomAppBar(),
         body: FutureBuilder<DocumentSnapshot>(
             future: Database.readUser(userId),
             builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.waiting:
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(),
                   );
                 case ConnectionState.active:
-                  return Center(
+                  return const Center(
                     child: Text("Connection active"),
                   );
                 case ConnectionState.none:
-                  return Center(
+                  return const Center(
                     child: Text("Connection none"),
                   );
                 case ConnectionState.done:
