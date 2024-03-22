@@ -59,7 +59,7 @@ class _SignUpState extends State<SignUpPage> {
                     SizedBox(
                         height: 180,
                         child: Image.asset(
-                          "assets/Germanen-Wappen.jpg",
+                          "assets/germanen_wappen.jpg",
                           fit: BoxFit.contain,
                         )),
                     const SizedBox(height: 10),

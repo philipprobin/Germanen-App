@@ -33,7 +33,7 @@ class LoginPage extends StatelessWidget {
                     SizedBox(
                         height: 300,
                         child: Image.asset(
-                          "assets/Germanen-Wappen.jpg",
+                          "assets/germanen_wappen.jpg",
                           fit: BoxFit.contain,
                         )),
                     const SizedBox(height: 15),

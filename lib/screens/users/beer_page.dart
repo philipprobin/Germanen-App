@@ -94,10 +94,6 @@ class _BeerListPageState extends State<BeerListPage> {
                                                 snapshot.data!.docs[index].data()
                                                 as Map<String, dynamic>;
                                                 var beers = data['beers'];
-                                                var image = "";
-                                                try {
-                                                  image = data["image"];
-                                                } catch (e) {}
                                                 var sum = 0;
                                                 for (var entry in beers) {
                                                   if (entry['amount'] != null) {
